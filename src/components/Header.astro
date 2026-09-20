@@ -15,8 +15,17 @@ const base = import.meta.env.BASE_URL;
 <header class="site-header">
   <div class="container header-inner">
     <a href={base} class="brand">
-      <span class="brand-mark">CORK</span>
-      <span class="brand-full">Cortiçadas Clube Alentejo</span>
+      <img
+        class="brand-logo"
+        src={base.replace(/\/$/, '') + '/images/logo.png'}
+        alt="Logótipo do CORK — Cortiçadas Clube Alentejo"
+        width="40"
+        height="40"
+      />
+      <span class="brand-text">
+        <span class="brand-mark">CORK</span>
+        <span class="brand-full">Cortiçadas Clube Alentejo</span>
+      </span>
     </a>
     <nav class="nav" aria-label="Navegação principal">
       <ul>
@@ -50,10 +59,23 @@ const base = import.meta.env.BASE_URL;
 
   .brand {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
     line-height: 1;
     text-decoration: none;
     flex-shrink: 0;
+  }
+
+  .brand-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius);
+    flex-shrink: 0;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
   }
 
   .brand-mark {

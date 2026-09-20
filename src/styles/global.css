@@ -5,9 +5,9 @@
   through component files for hex codes.
 */
 :root {
-  --color-primary: #0b5d2e;      /* club green */
-  --color-primary-dark: #073f1f;
-  --color-accent: #e8a13a;       /* club gold/orange accent */
+  --color-primary: #005a96;      /* club blue */
+  --color-primary-dark: #003d66;
+  --color-accent: #00a99e;       /* club teal accent */
   --color-ink: #1a1f1c;
   --color-ink-soft: #4a534d;
   --color-bg: #ffffff;
