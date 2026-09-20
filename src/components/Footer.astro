@@ -1,0 +1,90 @@
+---
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div>
+      <p class="footer-brand">CORK — Cortiçadas Clube Alentejo</p>
+      <p class="footer-note">Clube de atletismo. Fundado em [ano].</p>
+    </div>
+    <div class="footer-links">
+      <a href={base + '/atas-orcamentos'}>Atas & Orçamentos</a>
+      <a href={base + '/reclamacoes'}>Reclamações</a>
+      <a href={base + '/contactos'}>Contactos</a>
+    </div>
+    <div class="footer-newsletter">
+      <p class="footer-note">Receba as novidades do clube:</p>
+      <a class="btn btn-outline btn-sm" href={base + '/#newsletter'}>Subscrever newsletter</a>
+    </div>
+  </div>
+  <div class="container">
+    <p class="copyright">© {year} CORK. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-bg-alt);
+    border-top: 1px solid var(--color-border);
+    padding: 2.5rem 0 1rem;
+    margin-top: 3rem;
+  }
+
+  .footer-inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: space-between;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .footer-brand {
+    font-weight: 700;
+    color: var(--color-primary);
+    margin: 0 0 0.25rem;
+  }
+
+  .footer-note {
+    font-size: 0.85rem;
+    color: var(--color-ink-soft);
+    margin: 0;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .footer-links a {
+    color: var(--color-ink);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .footer-links a:hover {
+    color: var(--color-primary);
+  }
+
+  .footer-newsletter {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .btn-sm {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.82rem;
+  }
+
+  .copyright {
+    font-size: 0.78rem;
+    color: var(--color-ink-soft);
+    padding-top: 1rem;
+    margin: 0;
+  }
+</style>

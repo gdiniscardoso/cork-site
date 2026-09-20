@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ResultsTable from '../components/ResultsTable.astro';
+import { getCollection } from 'astro:content';
+
+const allResults = (await getCollection('results')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const rows = allResults.map((r) => r.data);
+---
+
+<BaseLayout title="Resultados" description="Resultados individuais dos atletas do CORK.">
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">Atletas</p>
+      <h1>Resultados</h1>
+      <p class="intro">
+        Resultados pessoais dos atletas do clube em competições oficiais.
+        Cada resultado é um ficheiro de dados — adicionar um novo é publicar
+        um novo registo, sem tocar no design da página.
+      </p>
+      <ResultsTable rows={rows} />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  h1 { margin-bottom: 0.5rem; }
+  .intro {
+    max-width: 640px;
+    margin-bottom: 2rem;
+  }
+</style>

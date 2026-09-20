@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Contactos" description="Contactos do CORK — Cortiçadas Clube Alentejo.">
+  <section class="section">
+    <div class="container narrow">
+      <p class="eyebrow">Contactos</p>
+      <h1>Fale connosco</h1>
+      <div class="contact-grid">
+        <div class="card">
+          <h3>Sede do clube</h3>
+          <p>Rua do Estádio, s/n<br />7050-000 Cortiçadas, Alentejo</p>
+        </div>
+        <div class="card">
+          <h3>Email</h3>
+          <p><a href="mailto:geral@cork-atletismo.pt">geral@cork-atletismo.pt</a></p>
+        </div>
+        <div class="card">
+          <h3>Telefone</h3>
+          <p>+351 000 000 000<br /><span class="hint">Terça a sexta, 18h–20h</span></p>
+        </div>
+        <div class="card">
+          <h3>Redes sociais</h3>
+          <p><a href="#">Instagram</a> · <a href="#">Facebook</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow { max-width: 720px; }
+  h1 { margin-bottom: 1.75rem; }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .contact-grid h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+  }
+  .contact-grid p {
+    margin: 0;
+  }
+  .hint {
+    font-size: 0.82rem;
+  }
+</style>

@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Reclamações" description="Envie uma reclamação ao CORK.">
+  <section class="section">
+    <div class="container narrow">
+      <p class="eyebrow">Participe</p>
+      <h1>Reclamações</h1>
+      <p>
+        Se algo não correu como esperava, conte-nos. As reclamações são
+        analisadas pela direção do clube.
+      </p>
+      <!--
+        Same note as the suggestions form: needs a form backend when hosted
+        on GitHub Pages (Formspree, or native handling on Netlify/Cloudflare).
+      -->
+      <form class="form card" action="#" method="post">
+        <label>
+          Nome
+          <input type="text" name="name" required />
+        </label>
+        <label>
+          Email (para resposta)
+          <input type="email" name="email" required />
+        </label>
+        <label>
+          Assunto
+          <input type="text" name="subject" required />
+        </label>
+        <label>
+          Descrição
+          <textarea name="message" rows="6" required></textarea>
+        </label>
+        <button class="btn" type="submit">Enviar reclamação</button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow { max-width: 640px; }
+  h1 { margin-bottom: 0.5rem; }
+  .form {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  input, textarea {
+    font: inherit;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    resize: vertical;
+  }
+  button {
+    align-self: flex-start;
+  }
+</style>

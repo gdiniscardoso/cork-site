@@ -1,0 +1,111 @@
+---
+const navItems = [
+  { href: '/', label: 'Início' },
+  { href: '/noticias', label: 'Notícias' },
+  { href: '/calendario', label: 'Calendário' },
+  { href: '/resultados', label: 'Resultados' },
+  { href: '/atas-orcamentos', label: 'Atas & Orçamentos' },
+  { href: '/direcao', label: 'Direção' },
+  { href: '/historia', label: 'História' },
+  { href: '/contactos', label: 'Contactos' },
+];
+const base = import.meta.env.BASE_URL;
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href={base} class="brand">
+      <span class="brand-mark">CORK</span>
+      <span class="brand-full">Cortiçadas Clube Alentejo</span>
+    </a>
+    <nav class="nav" aria-label="Navegação principal">
+      <ul>
+        {navItems.map((item) => (
+          <li><a href={base.replace(/\/$/, '') + item.href}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <a class="btn btn-sm" href={base.replace(/\/$/, '') + '/sugestoes'}>Sugestões</a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(6px);
+    z-index: 50;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .brand-mark {
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--color-primary);
+    letter-spacing: 0.03em;
+  }
+
+  .brand-full {
+    font-size: 0.65rem;
+    color: var(--color-ink-soft);
+    letter-spacing: 0.02em;
+  }
+
+  .nav {
+    flex: 1;
+    overflow-x: auto;
+  }
+
+  .nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+  }
+
+  .nav a {
+    color: var(--color-ink);
+    text-decoration: none;
+    font-size: 0.92rem;
+    font-weight: 500;
+  }
+
+  .nav a:hover {
+    color: var(--color-primary);
+  }
+
+  .btn-sm {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 720px) {
+    .header-inner {
+      flex-wrap: wrap;
+    }
+    .nav ul {
+      gap: 0.9rem;
+    }
+  }
+</style>

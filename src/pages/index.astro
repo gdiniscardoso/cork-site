@@ -1,0 +1,175 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NewsCard from '../components/NewsCard.astro';
+import EventItem from '../components/EventItem.astro';
+import { getCollection } from 'astro:content';
+
+const allNews = (await getCollection('news')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const latestNews = allNews.slice(0, 3);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const upcomingEvents = [
+  { date: '27 Set', title: 'Corta-Mato Distrital', location: 'Parque da Cidade, Évora', type: 'prova' as const },
+  { date: '03 Out', title: 'Assembleia Geral Ordinária', location: 'Sede do clube, 19h00', type: 'reuniao' as const },
+  { date: '11 Out', title: 'Meeting de Pista Coberta', location: 'Pavilhão Municipal', type: 'prova' as const },
+];
+---
+
+<BaseLayout title="Início" description="CORK — Cortiçadas Clube Alentejo. Notícias, calendário, resultados e vida do clube.">
+  <section class="hero">
+    <div class="container hero-inner">
+      <p class="eyebrow">Cortiçadas Clube Alentejo</p>
+      <h1>Atletismo com raízes no Alentejo</h1>
+      <p class="hero-lead">
+        Formação, competição e comunidade. Acompanhe as notícias, resultados e
+        vida institucional do clube.
+      </p>
+      <div class="hero-actions">
+        <a class="btn" href={base + '/noticias'}>Ver notícias</a>
+        <a class="btn btn-outline" href={base + '/calendario'}>Calendário de provas</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Últimas notícias</h2>
+        <a href={base + '/noticias'}>Ver todas →</a>
+      </div>
+      <div class="news-grid">
+        {latestNews.map((post) => (
+          <NewsCard
+            title={post.data.title}
+            date={post.data.date}
+            summary={post.data.summary}
+            author={post.data.author}
+            href={base + '/noticias/' + post.slug}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>Próximos eventos</h2>
+        <a href={base + '/calendario'}>Ver calendário completo →</a>
+      </div>
+      <div class="events-list">
+        {upcomingEvents.map((e) => <EventItem {...e} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="newsletter">
+    <div class="container newsletter-box card">
+      <div>
+        <h2>Não perca nenhuma novidade</h2>
+        <p>Receba notícias, convocatórias e resultados diretamente no seu email.</p>
+      </div>
+      <!--
+        PoC placeholder: on GitHub Pages this form needs an external handler
+        (Buttondown / Mailchimp / Brevo embed, or a Formspree-style endpoint)
+        since there is no server to receive the POST. Swap the action below
+        for your provider's embed form action.
+      -->
+      <form class="newsletter-form" action="#" method="post">
+        <input type="email" name="email" placeholder="o.seu@email.com" required />
+        <button class="btn" type="submit">Subscrever</button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: #fff;
+    padding: 4.5rem 0;
+  }
+  .hero-inner {
+    max-width: 640px;
+  }
+  .hero .eyebrow {
+    color: var(--color-accent);
+  }
+  .hero h1 {
+    font-size: 2.4rem;
+    color: #fff;
+    margin-bottom: 0.6rem;
+  }
+  .hero-lead {
+    color: #e3ece5;
+    font-size: 1.05rem;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .hero-actions .btn-outline {
+    color: #fff;
+    border-color: #fff;
+  }
+  .hero-actions .btn-outline:hover {
+    background: #fff;
+    color: var(--color-primary);
+  }
+
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+  }
+  .section-head h2 {
+    margin: 0;
+  }
+  .section-head a {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .newsletter-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--color-bg-alt);
+  }
+  .newsletter-box h2 {
+    font-size: 1.3rem;
+  }
+  .newsletter-box p {
+    margin: 0;
+  }
+  .newsletter-form {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .newsletter-form input {
+    padding: 0.6rem 0.85rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    font-size: 0.92rem;
+    min-width: 220px;
+  }
+</style>

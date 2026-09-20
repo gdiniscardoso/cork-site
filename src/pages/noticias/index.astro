@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NewsCard from '../../components/NewsCard.astro';
+import { getCollection } from 'astro:content';
+
+const allNews = (await getCollection('news')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout title="Notícias" description="Todas as notícias do CORK.">
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">Notícias</p>
+      <h1>Todas as notícias</h1>
+      <div class="news-grid">
+        {allNews.map((post) => (
+          <NewsCard
+            title={post.data.title}
+            date={post.data.date}
+            summary={post.data.summary}
+            author={post.data.author}
+            href={base + '/noticias/' + post.slug}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  h1 { margin-bottom: 1.75rem; }
+  .news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('news');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'news'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const formatted = post.data.date.toLocaleDateString('pt-PT', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<BaseLayout title={post.data.title} description={post.data.summary}>
+  <article class="section">
+    <div class="container article-container">
+      <p class="eyebrow">Notícias</p>
+      <h1>{post.data.title}</h1>
+      <p class="meta">{formatted}{post.data.author ? ` · ${post.data.author}` : ''}</p>
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .article-container {
+    max-width: 720px;
+  }
+  h1 {
+    margin-bottom: 0.4rem;
+  }
+  .meta {
+    color: var(--color-ink-soft);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+  .prose :global(p) {
+    margin-bottom: 1.1rem;
+  }
+</style>

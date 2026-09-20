@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const milestones = [
+  { year: '[ano]', text: 'Fundação do clube por um grupo de atletas e treinadores locais.' },
+  { year: '[ano]', text: 'Primeira participação em campeonatos nacionais.' },
+  { year: '[ano]', text: 'Inauguração da pista de atletismo municipal.' },
+  { year: '[ano]', text: 'Criação dos escalões de formação para crianças e jovens.' },
+  { year: '[ano]', text: 'Primeiro título nacional conquistado por um atleta do clube.' },
+];
+---
+
+<BaseLayout title="História" description="História do CORK — Cortiçadas Clube Alentejo.">
+  <section class="section">
+    <div class="container narrow">
+      <p class="eyebrow">O Clube</p>
+      <h1>A nossa história</h1>
+      <p>
+        [Texto institucional sobre a fundação e a missão do clube — a
+        preencher pela direção.]
+      </p>
+      <div class="timeline">
+        {milestones.map((m) => (
+          <div class="milestone">
+            <div class="milestone-year">{m.year}</div>
+            <div class="milestone-text">{m.text}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: 720px;
+  }
+  h1 { margin-bottom: 0.75rem; }
+  .timeline {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .milestone {
+    display: flex;
+    gap: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .milestone-year {
+    flex-shrink: 0;
+    width: 70px;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+  .milestone-text {
+    color: var(--color-ink-soft);
+  }
+</style>

@@ -1,0 +1,47 @@
+---
+interface Props {
+  date: string;
+  title: string;
+  location: string;
+  type: 'prova' | 'reuniao' | 'treino' | 'outro';
+}
+const { date, title, location, type } = Astro.props;
+const typeLabels: Record<Props['type'], string> = {
+  prova: 'Prova',
+  reuniao: 'Assembleia',
+  treino: 'Treino',
+  outro: 'Evento',
+};
+---
+
+<div class="event-item card">
+  <div class="event-date">{date}</div>
+  <div class="event-body">
+    <span class="tag">{typeLabels[type]}</span>
+    <h4>{title}</h4>
+    <p>{location}</p>
+  </div>
+</div>
+
+<style>
+  .event-item {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+  .event-date {
+    flex-shrink: 0;
+    width: 90px;
+    font-weight: 700;
+    color: var(--color-primary);
+    font-size: 0.95rem;
+  }
+  .event-body h4 {
+    margin: 0.3rem 0 0.15rem;
+    font-size: 1rem;
+  }
+  .event-body p {
+    margin: 0;
+    font-size: 0.88rem;
+  }
+</style>
