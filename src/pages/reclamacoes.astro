@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const thanksUrl = new URL(base + '/obrigado-reclamacoes/', Astro.site);
 ---
 
 <BaseLayout title="Reclamações" description="Envie uma reclamação ao CORK.">
@@ -11,11 +13,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         Se algo não correu como esperava, conte-nos. As reclamações são
         analisadas pela direção do clube.
       </p>
-      <!--
-        Same note as the suggestions form: needs a form backend when hosted
-        on GitHub Pages (Formspree, or native handling on Netlify/Cloudflare).
-      -->
-      <form class="form card" action="#" method="post">
+      <form class="form card" action="https://formspree.io/f/moevdqke" method="post">
+        <input type="hidden" name="_subject" value="Nova reclamação — CORK" />
+        <input type="hidden" name="_next" value={thanksUrl} />
         <label>
           Nome
           <input type="text" name="name" required />

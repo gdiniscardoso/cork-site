@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const thanksUrl = new URL(base + '/obrigado-sugestoes/', Astro.site);
 ---
 
 <BaseLayout title="Sugestões" description="Envie sugestões ao CORK.">
@@ -10,12 +12,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <p>
         Tem uma ideia para melhorar o clube? Partilhe connosco.
       </p>
-      <!--
-        PoC placeholder: GitHub Pages has no backend to receive this POST.
-        In production, point `action` at a form backend such as Formspree,
-        or Netlify/Cloudflare Pages' built-in form handling if you host there.
-      -->
-      <form class="form card" action="#" method="post">
+      <form class="form card" action="https://formspree.io/f/moevdqke" method="post">
+        <input type="hidden" name="_subject" value="Nova sugestão — CORK" />
+        <input type="hidden" name="_next" value={thanksUrl} />
         <label>
           Nome (opcional)
           <input type="text" name="name" />

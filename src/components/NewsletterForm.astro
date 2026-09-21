@@ -131,7 +131,7 @@
               </svg>
             </div>
             <div style="font-family:Helvetica, sans-serif; font-size:14px; text-align:left; color:#687484; background-color:transparent;">
-              <p>We use Brevo as our marketing platform. By submitting this form you agree that the personal data you provided will be transferred to Brevo for processing in accordance with <a href="https://www.brevo.com/en/legal/privacypolicy/" target="_blank" rel="nofollow noopener">Brevo&#39;s Privacy Policy.</a></p>
+              <p>We use Brevo as our marketing platform. By submitting this form you agree that the personal data you provided will be transferred to Brevo for processing in accordance with <a href="https://www.brevo.com/en/legal/privacypolicy/" target="_blank" rel="nofollow noopener noreferrer">Brevo&#39;s Privacy Policy.</a></p>
             </div>
           </div>
         </div>
@@ -183,6 +183,9 @@
   (function () {
     var email = new URLSearchParams(window.location.search).get('email');
     var input = document.getElementById('EMAIL');
-    if (email && input) input.value = email;
+    if (email && input) {
+      input.value = email;
+      history.replaceState(null, '', window.location.pathname);
+    }
   })();
 </script>
