@@ -103,13 +103,7 @@ const carouselSlides: Slide[] = [
         <h2>Não perca nenhuma novidade</h2>
         <p>Receba notícias, convocatórias e resultados diretamente no seu email.</p>
       </div>
-      <!--
-        PoC placeholder: on GitHub Pages this form needs an external handler
-        (Buttondown / Mailchimp / Brevo embed, or a Formspree-style endpoint)
-        since there is no server to receive the POST. Swap the action below
-        for your provider's embed form action.
-      -->
-      <form class="newsletter-form" action="#" method="post">
+      <form class="newsletter-form" action={base + '/newsletter'} method="get">
         <input type="email" name="email" placeholder="o.seu@email.com" required />
         <button class="btn" type="submit">Subscrever</button>
       </form>

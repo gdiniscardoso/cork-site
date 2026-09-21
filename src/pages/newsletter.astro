@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+---
+
+<BaseLayout title="Newsletter" description="Subscreva a newsletter do CORK e receba notícias, convocatórias e resultados por email.">
+  <section class="section">
+    <div class="container narrow">
+      <p class="eyebrow">Newsletter</p>
+      <h1>Não perca nenhuma novidade</h1>
+      <p>Receba notícias, convocatórias e resultados diretamente no seu email.</p>
+      <NewsletterForm />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow { max-width: 640px; }
+  h1 { margin-bottom: 0.5rem; }
+  p { margin-bottom: 1.5rem; }
+</style>
