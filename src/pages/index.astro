@@ -2,7 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import NewsCard from '../components/NewsCard.astro';
 import EventItem from '../components/EventItem.astro';
+import HeroCarousel from '../components/HeroCarousel.astro';
+import type { Slide } from '../components/HeroCarousel.astro';
 import { getCollection } from 'astro:content';
+import athleteActionPhoto from '../assets/members/709406104_18093211694193271_6887596880022177049_n.jpg';
 
 const allNews = (await getCollection('news')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
@@ -15,23 +18,52 @@ const upcomingEvents = [
   { date: '03 Out', title: 'Assembleia Geral Ordinária', location: 'Sede do clube, 19h00', type: 'reuniao' as const },
   { date: '11 Out', title: 'Meeting de Pista Coberta', location: 'Pavilhão Municipal', type: 'prova' as const },
 ];
+const nextEvent = upcomingEvents[0];
+
+const allResults = await getCollection('results');
+const records = allResults.map((r) => ({
+  athlete: r.data.athlete,
+  event: r.data.event,
+  result: r.data.result,
+  competition: r.data.competition,
+  dateLabel: r.data.date.toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }),
+}));
+const firstRecord = records[0];
+
+const carouselSlides: Slide[] = [
+  {
+    id: 'event',
+    eyebrow: 'Próxima prova',
+    title: nextEvent.title,
+    description: `${nextEvent.date} · ${nextEvent.location}`,
+    ctaLabel: 'Ver calendário completo',
+    ctaHref: base + '/calendario',
+    bgClass: 'bg-event',
+  },
+  {
+    id: 'member',
+    eyebrow: 'Junte-se a nós',
+    title: 'Queres correr com o CORK?',
+    description: 'Formação, treinos e competição para todas as idades. Torna-te sócio e faz parte do clube.',
+    ctaLabel: 'Torna-te sócio',
+    ctaHref: base + '/contactos',
+    bgClass: 'bg-member',
+  },
+  {
+    id: 'record',
+    eyebrow: 'Recorde do clube',
+    title: firstRecord ? `${firstRecord.athlete} — ${firstRecord.event}: ${firstRecord.result}` : 'Resultados do clube',
+    description: firstRecord ? `${firstRecord.competition} · ${firstRecord.dateLabel}` : '',
+    ctaLabel: 'Ver todos os resultados',
+    ctaHref: base + '/resultados',
+    image: athleteActionPhoto,
+    imageAlt: 'Atleta do CORK em prova',
+  },
+];
 ---
 
 <BaseLayout title="Início" description="CORK — Cortiçadas Clube Alentejo. Notícias, calendário, resultados e vida do clube.">
-  <section class="hero">
-    <div class="container hero-inner">
-      <p class="eyebrow">Cortiçadas Clube Alentejo</p>
-      <h1>Atletismo com raízes no Alentejo</h1>
-      <p class="hero-lead">
-        Formação, competição e comunidade. Acompanhe as notícias, resultados e
-        vida institucional do clube.
-      </p>
-      <div class="hero-actions">
-        <a class="btn" href={base + '/noticias'}>Ver notícias</a>
-        <a class="btn btn-outline" href={base + '/calendario'}>Calendário de provas</a>
-      </div>
-    </div>
-  </section>
+  <HeroCarousel slides={carouselSlides} records={records} />
 
   <section class="section">
     <div class="container">
@@ -86,40 +118,6 @@ const upcomingEvents = [
 </BaseLayout>
 
 <style>
-  .hero {
-    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-    color: #fff;
-    padding: 4.5rem 0;
-  }
-  .hero-inner {
-    max-width: 640px;
-  }
-  .hero .eyebrow {
-    color: var(--color-accent);
-  }
-  .hero h1 {
-    font-size: 2.4rem;
-    color: #fff;
-    margin-bottom: 0.6rem;
-  }
-  .hero-lead {
-    color: #dbe8f0;
-    font-size: 1.05rem;
-  }
-  .hero-actions {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 1.5rem;
-  }
-  .hero-actions .btn-outline {
-    color: #fff;
-    border-color: #fff;
-  }
-  .hero-actions .btn-outline:hover {
-    background: #fff;
-    color: var(--color-primary);
-  }
-
   .section-head {
     display: flex;
     justify-content: space-between;

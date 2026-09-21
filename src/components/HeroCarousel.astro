@@ -1,0 +1,319 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+export interface Slide {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  ctaLabel: string;
+  ctaHref: string;
+  image?: ImageMetadata;
+  imageAlt?: string;
+  bgClass?: 'bg-event' | 'bg-member' | 'bg-record';
+}
+
+interface Props {
+  slides: Slide[];
+  /** JSON-serializable records used to fill the "record" slide with a random pick on load. */
+  records?: { athlete: string; event: string; result: string; competition: string; dateLabel: string }[];
+}
+
+const { slides, records = [] } = Astro.props;
+---
+
+<section class="carousel" aria-roledescription="carrossel" aria-label="Destaques do clube">
+  <div class="carousel-track">
+    {slides.map((slide, i) => (
+      <div class:list={['carousel-slide', { 'is-active': i === 0 }, slide.bgClass]} data-slide={slide.id} data-index={i}>
+        {slide.image && (
+          <Image
+            class="slide-bg"
+            src={slide.image}
+            alt=""
+            width={1600}
+            height={900}
+            loading={i === 0 ? 'eager' : 'lazy'}
+          />
+        )}
+        <div class="slide-overlay" aria-hidden="true"></div>
+        <div class="slide-content container">
+          <p class="eyebrow slide-eyebrow">{slide.eyebrow}</p>
+          <h2 class="slide-title" data-field="title">{slide.title}</h2>
+          <p class="slide-desc" data-field="description">{slide.description}</p>
+          <a class="btn slide-cta" href={slide.ctaHref}>{slide.ctaLabel}</a>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <button type="button" class="carousel-arrow carousel-prev" aria-label="Slide anterior">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button type="button" class="carousel-arrow carousel-next" aria-label="Slide seguinte">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <div class="carousel-dots" role="tablist" aria-label="Escolher slide">
+    {slides.map((slide, i) => (
+      <button
+        type="button"
+        role="tab"
+        class:list={['carousel-dot', { 'is-active': i === 0 }]}
+        aria-label={`Ir para: ${slide.eyebrow}`}
+        aria-selected={i === 0}
+        data-goto={i}
+      ></button>
+    ))}
+  </div>
+
+  {records.length > 0 && (
+    <script type="application/json" data-records set:html={JSON.stringify(records)} />
+  )}
+</section>
+
+<style>
+  .carousel {
+    position: relative;
+    height: min(64vh, 560px);
+    min-height: 400px;
+    overflow: hidden;
+    background: var(--color-primary-dark);
+  }
+
+  .carousel-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .carousel-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.7s ease;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .carousel-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .slide-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .bg-event {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  }
+
+  .bg-member {
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary-dark) 100%);
+  }
+
+  .slide-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 10, 20, 0.82) 0%, rgba(0, 10, 20, 0.35) 55%, rgba(0, 10, 20, 0.1) 100%);
+  }
+
+  .slide-content {
+    position: relative;
+    z-index: 1;
+    padding-top: 2.5rem;
+    padding-bottom: 2.75rem;
+    max-width: 640px;
+  }
+
+  .slide-eyebrow {
+    color: var(--color-accent);
+  }
+
+  .slide-title {
+    color: #fff;
+    font-size: 2rem;
+    margin: 0.3rem 0 0.5rem;
+  }
+
+  .slide-desc {
+    color: #e7edf0;
+    margin: 0 0 1.25rem;
+    font-size: 1rem;
+  }
+
+  .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .carousel-arrow:hover {
+    background: rgba(0, 0, 0, 0.6);
+  }
+
+  .carousel-prev {
+    left: 1rem;
+  }
+
+  .carousel-next {
+    right: 1rem;
+  }
+
+  .carousel-dots {
+    position: absolute;
+    z-index: 2;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .carousel-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid #fff;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, background 0.2s ease;
+  }
+
+  .carousel-dot.is-active {
+    background: #fff;
+    opacity: 1;
+  }
+
+  @media (max-width: 640px) {
+    .carousel {
+      height: min(80vh, 480px);
+    }
+    .slide-title {
+      font-size: 1.5rem;
+    }
+    .slide-desc {
+      font-size: 0.92rem;
+    }
+    .carousel-arrow {
+      width: 36px;
+      height: 36px;
+    }
+  }
+</style>
+
+<script>
+  function initCarousels() {
+    document.querySelectorAll<HTMLElement>('.carousel').forEach((carousel) => {
+      const slides = Array.from(carousel.querySelectorAll<HTMLElement>('.carousel-slide'));
+      const dots = Array.from(carousel.querySelectorAll<HTMLButtonElement>('.carousel-dot'));
+      const prevBtn = carousel.querySelector<HTMLButtonElement>('.carousel-prev');
+      const nextBtn = carousel.querySelector<HTMLButtonElement>('.carousel-next');
+      if (slides.length === 0) return;
+
+      let current = 0;
+      let timer: ReturnType<typeof setInterval> | null = null;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function show(index: number) {
+        current = (index + slides.length) % slides.length;
+        slides.forEach((s, i) => s.classList.toggle('is-active', i === current));
+        dots.forEach((d, i) => {
+          d.classList.toggle('is-active', i === current);
+          d.setAttribute('aria-selected', String(i === current));
+        });
+      }
+
+      function next() {
+        show(current + 1);
+      }
+
+      function prev() {
+        show(current - 1);
+      }
+
+      function startAutoplay() {
+        if (prefersReducedMotion || slides.length < 2) return;
+        stopAutoplay();
+        timer = setInterval(next, 6000);
+      }
+
+      function stopAutoplay() {
+        if (timer) {
+          clearInterval(timer);
+          timer = null;
+        }
+      }
+
+      nextBtn?.addEventListener('click', () => { next(); startAutoplay(); });
+      prevBtn?.addEventListener('click', () => { prev(); startAutoplay(); });
+      dots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+          const target = Number(dot.dataset.goto);
+          show(target);
+          startAutoplay();
+        });
+      });
+
+      carousel.addEventListener('mouseenter', stopAutoplay);
+      carousel.addEventListener('mouseleave', startAutoplay);
+      carousel.addEventListener('focusin', stopAutoplay);
+      carousel.addEventListener('focusout', startAutoplay);
+
+      let touchStartX = 0;
+      carousel.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].clientX; }, { passive: true });
+      carousel.addEventListener('touchend', (e) => {
+        const delta = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(delta) > 40) {
+          delta < 0 ? next() : prev();
+          startAutoplay();
+        }
+      }, { passive: true });
+
+      // Fill the "record" slide with a random athlete result on each load.
+      const recordScript = carousel.querySelector<HTMLScriptElement>('script[data-records]');
+      const recordSlide = carousel.querySelector<HTMLElement>('[data-slide="record"]');
+      if (recordScript && recordSlide) {
+        try {
+          const records = JSON.parse(recordScript.textContent || '[]');
+          if (Array.isArray(records) && records.length > 0) {
+            const pick = records[Math.floor(Math.random() * records.length)];
+            const titleEl = recordSlide.querySelector('[data-field="title"]');
+            const descEl = recordSlide.querySelector('[data-field="description"]');
+            if (titleEl) titleEl.textContent = `${pick.athlete} — ${pick.event}: ${pick.result}`;
+            if (descEl) descEl.textContent = `${pick.competition} · ${pick.dateLabel}`;
+          }
+        } catch {
+          // keep the server-rendered fallback content
+        }
+      }
+
+      show(0);
+      startAutoplay();
+    });
+  }
+
+  initCarousels();
+</script>

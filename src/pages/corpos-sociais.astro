@@ -1,0 +1,245 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+const photoFiles = import.meta.glob('/src/assets/members/*.{jpg,jpeg,png,webp}', { eager: true });
+
+function getPhoto(slug?: string) {
+  if (!slug) return undefined;
+  const entry = Object.entries(photoFiles).find(([path]) => path.match(new RegExp(`/${slug}\\.[^./]+$`)));
+  return (entry?.[1] as { default: ImageMetadata } | undefined)?.default;
+}
+
+const mandates = [
+  {
+    period: '2025 – 2027',
+    current: true,
+    bodies: [
+      {
+        name: 'Direção',
+        members: [
+          { role: 'Presidente', name: 'Nuno Perdigão' },
+          { role: 'Secretário', name: 'Gonçalo Cardoso', photo: 'goncalo-cardoso' },
+          { role: 'Tesoureiro', name: 'Francisco Perdigão' },
+        ],
+      },
+      {
+        name: 'Assembleia Geral',
+        members: [
+          { role: 'Presidente', name: 'António Vilelas' },
+          { role: 'Vice-Presidente', name: 'Diana Fernandes' },
+          { role: 'Secretário', name: 'Diogo Vilelas' },
+        ],
+      },
+      {
+        name: 'Conselho Fiscal',
+        members: [
+          { role: 'Presidente', name: 'Pedro Ferreira' },
+          { role: 'Secretário', name: 'Rosa Fernandes' },
+          { role: 'Vogal', name: 'Matilde Perdigão' },
+        ],
+      },
+    ],
+  },
+  {
+    period: '2023 – 2025',
+    bodies: [
+      {
+        name: 'Direção',
+        members: [
+          { role: 'Presidente', name: '[nome]' },
+          { role: 'Vice-Presidente', name: '[nome]' },
+          { role: 'Secretário', name: '[nome]' },
+          { role: 'Tesoureiro', name: '[nome]' },
+        ],
+      },
+      {
+        name: 'Assembleia Geral',
+        members: [
+          { role: 'Presidente', name: '[nome]' },
+          { role: 'Vice-Presidente', name: '[nome]' },
+          { role: 'Secretário', name: '[nome]' },
+        ],
+      },
+      {
+        name: 'Conselho Fiscal',
+        members: [
+          { role: 'Presidente', name: '[nome]' },
+          { role: 'Vogal', name: '[nome]' },
+          { role: 'Relator', name: '[nome]' },
+        ],
+      },
+    ],
+  }
+];
+---
+
+<BaseLayout title="Corpos Sociais" description="Corpos sociais e direção do CORK ao longo dos mandatos.">
+  <section class="section">
+    <div class="container narrow">
+      <p class="eyebrow">Corpos Sociais</p>
+      <h1>Corpos Sociais</h1>
+      <p class="intro">Histórico dos mandatos dos corpos sociais do clube, do mais recente ao mais antigo.</p>
+
+      <div class="timeline">
+        {mandates.map((mandate) => (
+          <div class:list={['mandate', { 'mandate-current': mandate.current }]}>
+            <div class="mandate-marker" aria-hidden="true"></div>
+            <div class="mandate-body">
+              <div class="mandate-header">
+                <h2 class="mandate-period">{mandate.period}</h2>
+                {mandate.current && <span class="tag">Mandato atual</span>}
+              </div>
+              {mandate.bodies.map((body) => (
+                <div class="body-group">
+                  <h3 class="body-name">{body.name}</h3>
+                  <div class="members-grid">
+                    {body.members.map((m) => (
+                      <div class="member-card card">
+                        {getPhoto(m.photo) ? (
+                          <Image src={getPhoto(m.photo)!} alt={m.name} width={46} height={46} class="avatar avatar-photo" />
+                        ) : (
+                          <div class="avatar" aria-hidden="true">{m.name.split(' ').map(n => n[0]).slice(0,2).join('')}</div>
+                        )}
+                        <div>
+                          <p class="member-role">{m.role}</p>
+                          <p class="member-name">{m.name}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow {
+    max-width: 780px;
+  }
+  h1 { margin-bottom: 0.5rem; }
+  .intro {
+    margin-bottom: 2.5rem;
+  }
+
+  .timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 0.4rem;
+    bottom: 0.4rem;
+    left: 7px;
+    width: 2px;
+    background: var(--color-border);
+  }
+
+  .mandate {
+    position: relative;
+    display: flex;
+    gap: 1.5rem;
+    padding-left: 2.25rem;
+  }
+
+  .mandate-marker {
+    position: absolute;
+    top: 0.3rem;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--color-bg);
+    border: 2px solid var(--color-primary);
+  }
+
+  .mandate-current .mandate-marker {
+    background: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(0, 90, 150, 0.15);
+  }
+
+  .mandate-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .mandate-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .mandate-period {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+
+  .body-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .body-name {
+    margin: 0;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-accent);
+  }
+
+  .members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .member-card {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .mandate:not(.mandate-current) .avatar {
+    background: var(--color-ink-soft);
+  }
+  .avatar-photo {
+    object-fit: cover;
+    background: none;
+  }
+  .member-role {
+    margin: 0;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--color-ink-soft);
+  }
+  .member-name {
+    margin: 0.1rem 0 0;
+    font-weight: 600;
+  }
+</style>
