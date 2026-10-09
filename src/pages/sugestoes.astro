@@ -27,6 +27,12 @@ const thanksUrl = new URL(base + '/obrigado-sugestoes/', Astro.site);
           Sugestão
           <textarea name="message" rows="5" required></textarea>
         </label>
+        <p class="hint">
+          Pode submeter esta sugestão de forma anónima — nome e email são
+          opcionais. Se os indicar, consulte a nossa
+          <a href={base + '/privacidade'}>Política de Privacidade</a> para
+          saber como tratamos esses dados.
+        </p>
         <button class="btn" type="submit">Enviar sugestão</button>
       </form>
     </div>
@@ -56,6 +62,12 @@ const thanksUrl = new URL(base + '/obrigado-sugestoes/', Astro.site);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     resize: vertical;
+  }
+  .hint {
+    margin: -0.5rem 0 0;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--color-ink-soft);
   }
   button {
     align-self: flex-start;
