@@ -1,0 +1,23 @@
+---
+interface Props {
+  message?: string;
+}
+const { message = 'Brevemente' } = Astro.props;
+---
+
+<div class="empty-state card">
+  <p>{message}</p>
+</div>
+
+<style>
+  .empty-state {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    color: var(--color-ink-soft);
+  }
+  .empty-state p {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+</style>

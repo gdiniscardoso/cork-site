@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import NewsCard from '../../components/NewsCard.astro';
+import EmptyState from '../../components/EmptyState.astro';
 import { getCollection } from 'astro:content';
 
 const allNews = (await getCollection('news')).sort(
@@ -14,17 +15,21 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <div class="container">
       <p class="eyebrow">Notícias</p>
       <h1>Todas as notícias</h1>
-      <div class="news-grid">
-        {allNews.map((post) => (
-          <NewsCard
-            title={post.data.title}
-            date={post.data.date}
-            summary={post.data.summary}
-            author={post.data.author}
-            href={base + '/noticias/' + post.slug}
-          />
-        ))}
-      </div>
+      {allNews.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div class="news-grid">
+          {allNews.map((post) => (
+            <NewsCard
+              title={post.data.title}
+              date={post.data.date}
+              summary={post.data.summary}
+              author={post.data.author}
+              href={base + '/noticias/' + post.slug}
+            />
+          ))}
+        </div>
+      )}
     </div>
   </section>
 </BaseLayout>

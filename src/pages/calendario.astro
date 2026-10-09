@@ -1,16 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import EventItem from '../components/EventItem.astro';
-
-// PoC data — in production this list would come from a content file
-// (content/events/*.json) or an embedded public Google Calendar.
-const events = [
-  { date: '27 Set 2026', title: 'Corta-Mato Distrital', location: 'Parque da Cidade, Évora', type: 'prova' as const },
-  { date: '03 Out 2026', title: 'Assembleia Geral Ordinária', location: 'Sede do clube, 19h00', type: 'reuniao' as const },
-  { date: '11 Out 2026', title: 'Meeting de Pista Coberta', location: 'Pavilhão Municipal', type: 'prova' as const },
-  { date: '18 Out 2026', title: 'Treino Aberto — Escalões de Formação', location: 'Estádio Municipal', type: 'treino' as const },
-  { date: '08 Nov 2026', title: 'Campeonato Regional de Pista Coberta', location: 'Pavilhão Multiusos de Beja', type: 'prova' as const },
-];
+import EmptyState from '../components/EmptyState.astro';
+import { events } from '../data/events';
 ---
 
 <BaseLayout title="Calendário" description="Calendário de provas, treinos e assembleias do CORK.">
@@ -23,9 +15,13 @@ const events = [
         telemóvel ou agenda, este calendário pode também ser publicado como
         feed iCal ou embutido a partir do Google Calendar.
       </p>
-      <div class="events-list">
-        {events.map((e) => <EventItem {...e} />)}
-      </div>
+      {events.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div class="events-list">
+          {events.map((e) => <EventItem {...e} />)}
+        </div>
+      )}
     </div>
   </section>
 </BaseLayout>

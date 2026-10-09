@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ResultsTable from '../components/ResultsTable.astro';
+import EmptyState from '../components/EmptyState.astro';
 import { getCollection } from 'astro:content';
 
 const allResults = (await getCollection('results')).sort(
@@ -19,7 +20,7 @@ const rows = allResults.map((r) => r.data);
         Cada resultado é um ficheiro de dados — adicionar um novo é publicar
         um novo registo, sem tocar no design da página.
       </p>
-      <ResultsTable rows={rows} />
+      {rows.length === 0 ? <EmptyState /> : <ResultsTable rows={rows} />}
     </div>
   </section>
 </BaseLayout>

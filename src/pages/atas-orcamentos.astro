@@ -1,16 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import EmptyState from '../components/EmptyState.astro';
 
-// PoC data — in production these would be entries with links to PDF files
+// In production these would be entries with links to PDF files
 // (stored in /public/documentos/ or an external drive), added via the
 // content workflow without touching this page's layout.
-const documents = [
-  { title: 'Ata da Assembleia Geral Ordinária', date: '15 Março 2026', type: 'Ata', href: '#' },
-  { title: 'Orçamento aprovado — Época 2026/2027', date: '15 Março 2026', type: 'Orçamento', href: '#' },
-  { title: 'Ata da Assembleia Geral Extraordinária', date: '02 Novembro 2025', type: 'Ata', href: '#' },
-  { title: 'Relatório de Contas — Época 2025/2026', date: '20 Outubro 2025', type: 'Relatório', href: '#' },
-  { title: 'Orçamento aprovado — Época 2025/2026', date: '18 Setembro 2025', type: 'Orçamento', href: '#' },
-];
+const documents: { title: string; date: string; type: string; href: string }[] = [];
 ---
 
 <BaseLayout title="Atas e Orçamentos" description="Atas de assembleia e orçamentos aprovados do CORK, para transparência institucional.">
@@ -22,18 +17,22 @@ const documents = [
         Documentos institucionais do clube, disponibilizados para consulta
         pelos sócios e pelo público em geral.
       </p>
-      <div class="doc-list">
-        {documents.map((doc) => (
-          <a class="doc-item card" href={doc.href}>
-            <span class="tag">{doc.type}</span>
-            <div class="doc-body">
-              <h3>{doc.title}</h3>
-              <p>{doc.date}</p>
-            </div>
-            <span class="doc-action">Descarregar PDF →</span>
-          </a>
-        ))}
-      </div>
+      {documents.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div class="doc-list">
+          {documents.map((doc) => (
+            <a class="doc-item card" href={doc.href}>
+              <span class="tag">{doc.type}</span>
+              <div class="doc-body">
+                <h3>{doc.title}</h3>
+                <p>{doc.date}</p>
+              </div>
+              <span class="doc-action">Descarregar PDF →</span>
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   </section>
 </BaseLayout>

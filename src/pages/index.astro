@@ -2,9 +2,11 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import NewsCard from '../components/NewsCard.astro';
 import EventItem from '../components/EventItem.astro';
+import EmptyState from '../components/EmptyState.astro';
 import HeroCarousel from '../components/HeroCarousel.astro';
 import type { Slide } from '../components/HeroCarousel.astro';
 import { getCollection } from 'astro:content';
+import { events } from '../data/events';
 import athleteActionPhoto from '../assets/members/709406104_18093211694193271_6887596880022177049_n.jpg';
 
 const allNews = (await getCollection('news')).sort(
@@ -13,11 +15,7 @@ const allNews = (await getCollection('news')).sort(
 const latestNews = allNews.slice(0, 3);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-const upcomingEvents = [
-  { date: '27 Set', title: 'Corta-Mato Distrital', location: 'Parque da Cidade, Évora', type: 'prova' as const },
-  { date: '03 Out', title: 'Assembleia Geral Ordinária', location: 'Sede do clube, 19h00', type: 'reuniao' as const },
-  { date: '11 Out', title: 'Meeting de Pista Coberta', location: 'Pavilhão Municipal', type: 'prova' as const },
-];
+const upcomingEvents = events.slice(0, 3);
 const nextEvent = upcomingEvents[0];
 
 const allResults = await getCollection('results');
@@ -31,15 +29,15 @@ const records = allResults.map((r) => ({
 const firstRecord = records[0];
 
 const carouselSlides: Slide[] = [
-  {
+  ...(nextEvent ? [{
     id: 'event',
     eyebrow: 'Próxima prova',
     title: nextEvent.title,
     description: `${nextEvent.date} · ${nextEvent.location}`,
     ctaLabel: 'Ver calendário completo',
     ctaHref: base + '/calendario',
-    bgClass: 'bg-event',
-  },
+    bgClass: 'bg-event' as const,
+  }] : []),
   {
     id: 'member',
     eyebrow: 'Junte-se a nós',
@@ -71,17 +69,21 @@ const carouselSlides: Slide[] = [
         <h2>Últimas notícias</h2>
         <a href={base + '/noticias'}>Ver todas →</a>
       </div>
-      <div class="news-grid">
-        {latestNews.map((post) => (
-          <NewsCard
-            title={post.data.title}
-            date={post.data.date}
-            summary={post.data.summary}
-            author={post.data.author}
-            href={base + '/noticias/' + post.slug}
-          />
-        ))}
-      </div>
+      {latestNews.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div class="news-grid">
+          {latestNews.map((post) => (
+            <NewsCard
+              title={post.data.title}
+              date={post.data.date}
+              summary={post.data.summary}
+              author={post.data.author}
+              href={base + '/noticias/' + post.slug}
+            />
+          ))}
+        </div>
+      )}
     </div>
   </section>
 
@@ -91,9 +93,13 @@ const carouselSlides: Slide[] = [
         <h2>Próximos eventos</h2>
         <a href={base + '/calendario'}>Ver calendário completo →</a>
       </div>
-      <div class="events-list">
-        {upcomingEvents.map((e) => <EventItem {...e} />)}
-      </div>
+      {upcomingEvents.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div class="events-list">
+          {upcomingEvents.map((e) => <EventItem {...e} />)}
+        </div>
+      )}
     </div>
   </section>
 

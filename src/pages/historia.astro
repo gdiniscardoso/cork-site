@@ -1,13 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import EmptyState from '../components/EmptyState.astro';
 
-const milestones = [
-  { year: '[ano]', text: 'Fundação do clube por um grupo de atletas e treinadores locais.' },
-  { year: '[ano]', text: 'Primeira participação em campeonatos nacionais.' },
-  { year: '[ano]', text: 'Inauguração da pista de atletismo municipal.' },
-  { year: '[ano]', text: 'Criação dos escalões de formação para crianças e jovens.' },
-  { year: '[ano]', text: 'Primeiro título nacional conquistado por um atleta do clube.' },
-];
+const milestones: { year: string; text: string }[] = [];
 ---
 
 <BaseLayout title="História" description="História do CORK — Cortiçadas Clube Alentejo.">
@@ -15,18 +10,18 @@ const milestones = [
     <div class="container narrow">
       <p class="eyebrow">O Clube</p>
       <h1>A nossa história</h1>
-      <p>
-        [Texto institucional sobre a fundação e a missão do clube — a
-        preencher pela direção.]
-      </p>
-      <div class="timeline">
-        {milestones.map((m) => (
-          <div class="milestone">
-            <div class="milestone-year">{m.year}</div>
-            <div class="milestone-text">{m.text}</div>
-          </div>
-        ))}
-      </div>
+      {milestones.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <div class="timeline">
+          {milestones.map((m) => (
+            <div class="milestone">
+              <div class="milestone-year">{m.year}</div>
+              <div class="milestone-text">{m.text}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   </section>
 </BaseLayout>
