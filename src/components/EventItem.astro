@@ -1,47 +1,106 @@
 ---
 interface Props {
   date: string;
+  endDate?: string;
   title: string;
   location: string;
-  type: 'prova' | 'reuniao' | 'treino' | 'outro';
+  organizer?: string;
+  discipline: string;
+  scope?: string;
+  source?: string;
+  note?: string;
+  isPast?: boolean;
 }
-const { date, title, location, type } = Astro.props;
-const typeLabels: Record<Props['type'], string> = {
-  prova: 'Prova',
-  reuniao: 'Assembleia',
-  treino: 'Treino',
-  outro: 'Evento',
+const { date, endDate, title, location, organizer, discipline, scope, source, note, isPast } = Astro.props;
+
+const parse = (s: string) => {
+  const [y, m, d] = s.split('-').map(Number);
+  return new Date(y, m - 1, d);
 };
+const start = parse(date);
+const day = start.getDate();
+const weekday = start.toLocaleDateString('pt-PT', { weekday: 'short' }).replace('.', '');
+
+let rangeLabel = '';
+if (endDate && endDate !== date) {
+  const end = parse(endDate);
+  const sameMonth = end.getMonth() === start.getMonth();
+  rangeLabel = `até ${end.getDate()}${sameMonth ? '' : ' ' + end.toLocaleDateString('pt-PT', { month: 'short' })}`;
+}
 ---
 
-<div class="event-item card">
-  <div class="event-date">{date}</div>
-  <div class="event-body">
-    <span class="tag">{typeLabels[type]}</span>
-    <h4>{title}</h4>
-    <p>{location}</p>
+<article class:list={["event-item", "card", { past: isPast }]}>
+  <div class="event-date">
+    <div class="d">{day}</div>
+    <div class="w">{weekday}</div>
   </div>
-</div>
+  <div class="event-body">
+    <h4>{title}</h4>
+    <div class="meta">
+      <span>{location}</span>
+      {organizer && <span>{organizer}</span>}
+      {rangeLabel && <span>{rangeLabel}</span>}
+    </div>
+    <div class="tags">
+      <span class="tag tag-discipline">{discipline}</span>
+      {scope && <span class="tag">{scope}</span>}
+    </div>
+    {note && <p class="note">{note}</p>}
+  </div>
+</article>
 
 <style>
   .event-item {
-    display: flex;
-    gap: 1.25rem;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+  .event-item.past {
+    opacity: 0.55;
   }
   .event-date {
+    text-align: center;
     flex-shrink: 0;
-    width: 90px;
+  }
+  .event-date .d {
     font-weight: 700;
+    font-size: 1.4rem;
     color: var(--color-primary);
-    font-size: 0.95rem;
+    line-height: 1;
+  }
+  .event-date .w {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-soft);
   }
   .event-body h4 {
-    margin: 0.3rem 0 0.15rem;
+    margin: 0 0 0.2rem;
     font-size: 1rem;
   }
-  .event-body p {
-    margin: 0;
-    font-size: 0.88rem;
+  .meta {
+    color: var(--color-ink-soft);
+    font-size: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.1rem 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+  .tag-discipline {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+  .note {
+    font-size: 0.82rem;
+    color: var(--color-ink-soft);
+    border-left: 2px solid var(--color-accent);
+    padding-left: 0.6rem;
+    margin: 0.5rem 0 0;
   }
 </style>

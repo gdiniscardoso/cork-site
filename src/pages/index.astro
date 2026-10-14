@@ -15,7 +15,18 @@ const allNews = (await getCollection('news')).sort(
 const latestNews = allNews.slice(0, 3);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-const upcomingEvents = events.slice(0, 3);
+const parseDate = (s: string) => {
+  const [y, m, d] = s.split('-').map(Number);
+  return new Date(y, m - 1, d);
+};
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+const sortedEvents = [...events].sort(
+  (a, b) => parseDate(a.date).valueOf() - parseDate(b.date).valueOf()
+);
+const upcomingEvents = sortedEvents
+  .filter((e) => parseDate(e.endDate ?? e.date) >= today)
+  .slice(0, 3);
 const nextEvent = upcomingEvents[0];
 
 const allResults = await getCollection('results');

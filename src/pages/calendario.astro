@@ -2,39 +2,399 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import EventItem from '../components/EventItem.astro';
 import EmptyState from '../components/EmptyState.astro';
-import { events } from '../data/events';
+import { events, undatedEvents } from '../data/events';
+
+const parseDate = (s: string) => {
+  const [y, m, d] = s.split('-').map(Number);
+  return new Date(y, m - 1, d);
+};
+
+const sorted = [...events].sort(
+  (a, b) => parseDate(a.date).valueOf() - parseDate(b.date).valueOf()
+);
+
+const MONTHS = [
+  'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+  'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+];
+
+// Group chronologically by year + month (all events; past ones are hidden client-side)
+const groups: { key: string; label: string; items: typeof sorted }[] = [];
+for (const e of sorted) {
+  const d = parseDate(e.date);
+  const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
+  const last = groups[groups.length - 1];
+  if (last && last.key === key) {
+    last.items.push(e);
+  } else {
+    groups.push({ key, label: `${MONTHS[d.getMonth()]} ${d.getFullYear()}`, items: [e] });
+  }
+}
+
+const years = [...new Set(sorted.map((e) => parseDate(e.date).getFullYear()))];
+
+// Each filter group has one hue family; each item gets its own gradient inside it.
+const grad = (h1: number, h2: number) =>
+  `--g1: hsl(${h1} 75% 38%); --g2: hsl(${h2} 80% 52%);`;
+
+const tipoFilters = [
+  { value: 'Estrada', style: grad(205, 190) },
+  { value: 'Corta-Mato', style: grad(215, 235) },
+  { value: 'Pista Ar Livre', style: grad(225, 255) },
+  { value: 'Pista Curta', style: grad(235, 275) },
+  { value: 'Trail', style: grad(245, 215) },
+  { value: 'Formação', style: grad(255, 200) },
+];
+const ambitoFilters = [
+  { value: 'Regional', style: grad(150, 170) },
+  { value: 'Nacional', style: grad(130, 100) },
+  { value: 'Internacional', style: grad(110, 150) },
+];
+const fonteFilters = [
+  { value: 'AAE', style: grad(20, 5) },
+  { value: 'FPA', style: grad(35, 50) },
+];
 ---
 
-<BaseLayout title="Calendário" description="Calendário de provas, treinos e assembleias do CORK.">
+<BaseLayout title="Calendário" description="Calendário de provas, treinos e assembleias do CORK — AAE e FPA, 2026/2027.">
   <section class="section">
     <div class="container">
       <p class="eyebrow">Agenda</p>
       <h1>Calendário de provas e eventos</h1>
       <p class="intro">
-        Provas, assembleias e outros eventos do clube. Para integrar com o seu
-        telemóvel ou agenda, este calendário pode também ser publicado como
-        feed iCal ou embutido a partir do Google Calendar.
+        Calendário combinado da Associação de Atletismo de Évora (AAE) e do
+        Projeto de Calendário Nacional da Federação Portuguesa de Atletismo
+        (FPA) para a época 2026/2027 — provas regionais, nacionais e
+        internacionais. Por omissão mostra apenas provas ainda por realizar;
+        use os filtros para refinar ou ver provas passadas.
       </p>
-      {events.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <div class="events-list">
-          {events.map((e) => <EventItem {...e} />)}
+
+      <form class="filters" id="filters" onsubmit="return false">
+        <div class="filter-group tipo">
+          <span class="filter-label">Tipo</span>
+          <div class="chips">
+            {tipoFilters.map((f) => (
+              <label class="chip" style={f.style}>
+                <input type="checkbox" name="tipo" value={f.value} checked />
+                <span>{f.value}</span>
+              </label>
+            ))}
+          </div>
         </div>
+        <div class="filter-group ambito">
+          <span class="filter-label">Âmbito</span>
+          <div class="chips">
+            {ambitoFilters.map((f) => (
+              <label class="chip" style={f.style}>
+                <input type="checkbox" name="ambito" value={f.value} checked />
+                <span>{f.value}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+        <div class="filter-group fonte">
+          <span class="filter-label">Fonte</span>
+          <div class="chips">
+            {fonteFilters.map((f) => (
+              <label class="chip" style={f.style}>
+                <input type="checkbox" name="fonte" value={f.value} checked />
+                <span>{f.value}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+        <div class="filter-group outros">
+          <span class="filter-label">Outros</span>
+          <div class="chips">
+            <label class="select" style={grad(280, 300)}>
+              <span>Ano</span>
+              <select id="f-year">
+                <option value="">Todos</option>
+                {years.map((y) => <option value={y}>{y}</option>)}
+              </select>
+            </label>
+            <label class="select" style={grad(300, 325)}>
+              <span>Mês</span>
+              <select id="f-month">
+                <option value="">Todos</option>
+                {MONTHS.map((m, i) => <option value={i + 1}>{m}</option>)}
+              </select>
+            </label>
+            <label class="chip" style={grad(270, 245)}>
+              <input type="checkbox" id="f-past" />
+              <span>Mostrar provas passadas</span>
+            </label>
+          </div>
+        </div>
+        <button type="button" class="reset" id="f-reset">Repor filtros</button>
+      </form>
+
+      <div id="calendar">
+        {groups.map((group) => (
+          <section class="month-group" data-group={group.key}>
+            <h2>{group.label} <span class="count"></span></h2>
+            <div class="events-list">
+              {group.items.map((e) => (
+                <div
+                  class="ev"
+                  data-tipo={e.discipline}
+                  data-ambito={e.scope}
+                  data-aae={e.source.includes('AAE') ? '1' : '0'}
+                  data-fpa={e.source.includes('FPA') ? '1' : '0'}
+                  data-year={parseDate(e.date).getFullYear()}
+                  data-month={parseDate(e.date).getMonth() + 1}
+                  data-end={e.endDate ?? e.date}
+                >
+                  <EventItem {...e} />
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+      <div id="no-results" hidden>
+        <EmptyState message="Nenhuma prova encontrada com estes filtros" />
+      </div>
+
+      {undatedEvents.length > 0 && (
+        <section class="undated">
+          <h2>Sem data definida</h2>
+          <p class="intro-small">Provas nacionais que a FPA ainda não fixou em data.</p>
+          <div class="undated-list">
+            {undatedEvents.map((u) => (
+              <div class="undated-item">
+                <span class="period">{u.period}</span>
+                <span class="title">{u.title}</span>
+                <span class="tag">{u.discipline}</span>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
     </div>
   </section>
 </BaseLayout>
 
+<script>
+  const form = document.getElementById('filters') as HTMLFormElement;
+  const yearSel = document.getElementById('f-year') as HTMLSelectElement;
+  const monthSel = document.getElementById('f-month') as HTMLSelectElement;
+  const pastBox = document.getElementById('f-past') as HTMLInputElement;
+  const evs = [...document.querySelectorAll<HTMLElement>('.ev')];
+  const groups = [...document.querySelectorAll<HTMLElement>('.month-group')];
+  const noResults = document.getElementById('no-results')!;
+
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const now = new Date();
+  const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+
+  const checked = (name: string) =>
+    new Set(
+      [...form.querySelectorAll<HTMLInputElement>(`input[name="${name}"]:checked`)].map((i) => i.value)
+    );
+
+  function apply() {
+    const tipo = checked('tipo');
+    const ambito = checked('ambito');
+    const fonte = checked('fonte');
+    const year = yearSel.value;
+    const month = monthSel.value;
+    const showPast = pastBox.checked;
+
+    for (const el of evs) {
+      const d = el.dataset;
+      const isPast = d.end! < today;
+      el.firstElementChild?.classList.toggle('past', isPast);
+      el.hidden = !(
+        tipo.has(d.tipo!) &&
+        ambito.has(d.ambito!) &&
+        ((fonte.has('AAE') && d.aae === '1') || (fonte.has('FPA') && d.fpa === '1')) &&
+        (!year || d.year === year) &&
+        (!month || d.month === month) &&
+        (showPast || !isPast)
+      );
+    }
+
+    let total = 0;
+    for (const g of groups) {
+      const n = g.querySelectorAll('.ev:not([hidden])').length;
+      total += n;
+      g.hidden = n === 0;
+      g.querySelector('.count')!.textContent = `${n} ${n === 1 ? 'prova' : 'provas'}`;
+    }
+    noResults.hidden = total > 0;
+  }
+
+  form.addEventListener('change', apply);
+  document.getElementById('f-reset')!.addEventListener('click', () => {
+    form.querySelectorAll<HTMLInputElement>('input[name]').forEach((i) => (i.checked = true));
+    yearSel.value = '';
+    monthSel.value = '';
+    pastBox.checked = false;
+    apply();
+  });
+  apply();
+</script>
+
 <style>
   h1 { margin-bottom: 0.5rem; }
   .intro {
-    max-width: 640px;
+    max-width: 720px;
+    margin-bottom: 2.5rem;
+  }
+  [hidden] { display: none !important; }
+
+  .filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-bottom: 2.5rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+  }
+  .filter-group {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 0.75rem;
+    align-items: center;
+    padding-left: 0.75rem;
+    border-left: 4px solid var(--group);
+  }
+  .filter-group.tipo { --group: hsl(225 75% 45%); }
+  .filter-group.ambito { --group: hsl(135 60% 38%); }
+  .filter-group.fonte { --group: hsl(25 85% 50%); }
+  .filter-group.outros { --group: hsl(285 60% 50%); }
+  .filter-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--group);
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+  .chip, .select {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, var(--g1), var(--g2));
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.15s, filter 0.15s, box-shadow 0.15s;
+  }
+  .chip input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .chip:not(:has(input:checked)) {
+    opacity: 0.4;
+    filter: grayscale(0.6);
+  }
+  .chip:has(input:checked) {
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.25);
+  }
+  .chip:has(input:focus-visible),
+  .select:has(select:focus-visible) {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+  .select select {
+    font: inherit;
+    color: var(--color-ink);
+    border: 0;
+    border-radius: 999px;
+    padding: 0.1rem 0.4rem;
+    background: #fff;
+    cursor: pointer;
+  }
+  .reset {
+    align-self: flex-start;
+    font: inherit;
+    font-size: 0.82rem;
+    background: none;
+    border: 0;
+    padding: 0;
+    color: var(--color-primary);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  @media (max-width: 600px) {
+    .filter-group {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+    }
+  }
+
+  .month-group {
     margin-bottom: 2rem;
+  }
+  .month-group h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.9rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+  .count {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--color-ink-soft);
   }
   .events-list {
     display: flex;
     flex-direction: column;
-    gap: 0.9rem;
+    gap: 0.75rem;
+  }
+
+  .undated {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+  .undated h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.3rem;
+  }
+  .intro-small {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+  .undated-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .undated-item {
+    display: grid;
+    grid-template-columns: 170px 1fr auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.9rem;
+  }
+  .undated-item .period {
+    color: var(--color-ink-soft);
+    font-size: 0.82rem;
+  }
+  @media (max-width: 600px) {
+    .undated-item {
+      grid-template-columns: 1fr;
+      gap: 0.2rem;
+    }
   }
 </style>
