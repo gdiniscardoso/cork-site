@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const apps = [
+  {
+    title: 'Gestão Desportiva',
+    description: 'Aplicação de gestão desportiva do clube.',
+    href: 'https://maisdesporto.vercel.app/',
+    cta: 'Abrir aplicação',
+  },
+  {
+    title: 'Backoffice',
+    description: 'Área de administração e gestão interna.',
+    href: null,
+    cta: 'Abrir backoffice',
+  },
+];
+---
+
+<BaseLayout title="Aplicações" description="Acesso às aplicações do CORK — Cortiçadas Clube Alentejo.">
+  <section class="section">
+    <div class="container narrow">
+      <p class="eyebrow">Aplicações</p>
+      <h1>Aplicações do clube</h1>
+      <div class="app-grid">
+        {apps.map((app) => (
+          <div class="card">
+            <h3>{app.title}</h3>
+            <p>{app.description}</p>
+            <p>
+              {app.href ? (
+                <a href={app.href} target="_blank" rel="noopener noreferrer">{app.cta} →</a>
+              ) : (
+                <span class="disabled-link" aria-disabled="true">Brevemente</span>
+              )}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow { max-width: 720px; }
+  h1 { margin-bottom: 1.75rem; }
+  .app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .app-grid h3 {
+    font-size: 0.95rem;
+    margin-bottom: 0.4rem;
+  }
+  .app-grid p {
+    margin: 0 0 0.5rem;
+  }
+  .disabled-link {
+    color: var(--color-ink-soft);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+</style>
