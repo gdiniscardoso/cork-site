@@ -4,7 +4,7 @@ import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import EmptyState from '../components/EmptyState.astro';
 
-const showMandates = false;
+const showMandates = true;
 
 const photoFiles = import.meta.glob('/src/assets/members/*.{jpg,jpeg,png,webp}', { eager: true });
 
@@ -16,7 +16,6 @@ function getPhoto(slug?: string) {
 
 const mandates = [
   {
-    period: '2025 – 2027',
     current: true,
     bodies: [
       {
@@ -45,36 +44,6 @@ const mandates = [
       },
     ],
   },
-  {
-    period: '2023 – 2025',
-    bodies: [
-      {
-        name: 'Direção',
-        members: [
-          { role: 'Presidente', name: '[nome]' },
-          { role: 'Vice-Presidente', name: '[nome]' },
-          { role: 'Secretário', name: '[nome]' },
-          { role: 'Tesoureiro', name: '[nome]' },
-        ],
-      },
-      {
-        name: 'Assembleia Geral',
-        members: [
-          { role: 'Presidente', name: '[nome]' },
-          { role: 'Vice-Presidente', name: '[nome]' },
-          { role: 'Secretário', name: '[nome]' },
-        ],
-      },
-      {
-        name: 'Conselho Fiscal',
-        members: [
-          { role: 'Presidente', name: '[nome]' },
-          { role: 'Vogal', name: '[nome]' },
-          { role: 'Relator', name: '[nome]' },
-        ],
-      },
-    ],
-  }
 ];
 ---
 
@@ -94,7 +63,6 @@ const mandates = [
             <div class="mandate-marker" aria-hidden="true"></div>
             <div class="mandate-body">
               <div class="mandate-header">
-                <h2 class="mandate-period">{mandate.period}</h2>
                 {mandate.current && <span class="tag">Mandato atual</span>}
               </div>
               {mandate.bodies.map((body) => (
