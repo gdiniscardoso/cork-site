@@ -20,7 +20,7 @@ const MONTHS = [
 ];
 
 // Group chronologically by year + month (all events; past ones are hidden client-side)
-const groups: { key: string; label: string; items: typeof sorted }[] = [];
+const groups: { key: string; label: string; short: string; items: typeof sorted }[] = [];
 for (const e of sorted) {
   const d = parseDate(e.date);
   const key = `${d.getFullYear()}-${d.getMonth() + 1}`;
@@ -28,14 +28,17 @@ for (const e of sorted) {
   if (last && last.key === key) {
     last.items.push(e);
   } else {
-    groups.push({ key, label: `${MONTHS[d.getMonth()]} ${d.getFullYear()}`, items: [e] });
+    groups.push({
+      key,
+      label: `${MONTHS[d.getMonth()]} ${d.getFullYear()}`,
+      short: `${MONTHS[d.getMonth()].slice(0, 3)} ${String(d.getFullYear()).slice(2)}`,
+      items: [e],
+    });
   }
 }
 
 const icsPath = import.meta.env.BASE_URL.replace(/\/$/, '') + '/calendario.ics';
 const webcalUrl = new URL(icsPath, Astro.site).href.replace(/^https?:/, 'webcal:');
-
-const years = [...new Set(sorted.map((e) => parseDate(e.date).getFullYear()))];
 
 // Each filter group has one hue family; each item gets its own gradient inside it.
 const grad = (h1: number, h2: number) =>
@@ -101,22 +104,18 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
           </div>
         </div>
         <div class="filter-group outros">
-          <span class="filter-label">Outros</span>
+          <span class="filter-label">Quando</span>
           <div class="chips">
-            <label class="select" style={grad(280, 300)}>
-              <span>Ano</span>
-              <select id="f-year">
-                <option value="">Todos</option>
-                {years.map((y) => <option value={y}>{y}</option>)}
-              </select>
+            <label class="chip" style={grad(280, 300)}>
+              <input type="radio" name="quando" value="" checked />
+              <span>Todos os meses</span>
             </label>
-            <label class="select" style={grad(300, 325)}>
-              <span>Mês</span>
-              <select id="f-month">
-                <option value="">Todos</option>
-                {MONTHS.map((m, i) => <option value={i + 1}>{m}</option>)}
-              </select>
-            </label>
+            {groups.map((g) => (
+              <label class="chip" style={grad(280, 300)} data-month-chip={g.key}>
+                <input type="radio" name="quando" value={g.key} />
+                <span>{g.short}</span>
+              </label>
+            ))}
             <label class="chip" style={grad(270, 245)}>
               <input type="checkbox" id="f-past" />
               <span>Mostrar provas passadas</span>
@@ -174,8 +173,7 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
 
 <script>
   const form = document.getElementById('filters') as HTMLFormElement;
-  const yearSel = document.getElementById('f-year') as HTMLSelectElement;
-  const monthSel = document.getElementById('f-month') as HTMLSelectElement;
+  const monthChips = [...document.querySelectorAll<HTMLElement>('[data-month-chip]')];
   const pastBox = document.getElementById('f-past') as HTMLInputElement;
   const evs = [...document.querySelectorAll<HTMLElement>('.ev')];
   const groups = [...document.querySelectorAll<HTMLElement>('.month-group')];
@@ -194,9 +192,16 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
     const tipo = checked('tipo');
     const ambito = checked('ambito');
     const fonte = checked('fonte');
-    const year = yearSel.value;
-    const month = monthSel.value;
     const showPast = pastBox.checked;
+
+    // Month chips: without past events, only months that still have something upcoming.
+    const upcoming = new Set(evs.filter((el) => el.dataset.end! >= today).map((el) => `${el.dataset.year}-${el.dataset.month}`));
+    for (const chip of monthChips) chip.hidden = !showPast && !upcoming.has(chip.dataset.monthChip!);
+    let month = form.querySelector<HTMLInputElement>('input[name="quando"]:checked')!.value;
+    if (month && monthChips.find((c) => c.dataset.monthChip === month)!.hidden) {
+      form.querySelector<HTMLInputElement>('input[name="quando"][value=""]')!.checked = true;
+      month = '';
+    }
 
     for (const el of evs) {
       const d = el.dataset;
@@ -206,8 +211,7 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
         tipo.has(d.tipo!) &&
         ambito.has(d.ambito!) &&
         ((fonte.has('AAE') && d.aae === '1') || (fonte.has('FPA') && d.fpa === '1')) &&
-        (!year || d.year === year) &&
-        (!month || d.month === month) &&
+        (!month || `${d.year}-${d.month}` === month) &&
         (showPast || !isPast)
       );
     }
@@ -238,9 +242,8 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
   });
   form.addEventListener('change', apply);
   document.getElementById('f-reset')!.addEventListener('click', () => {
-    form.querySelectorAll<HTMLInputElement>('input[name]').forEach((i) => (i.checked = true));
-    yearSel.value = '';
-    monthSel.value = '';
+    form.querySelectorAll<HTMLInputElement>('input[type="checkbox"][name]').forEach((i) => (i.checked = true));
+    form.querySelector<HTMLInputElement>('input[name="quando"][value=""]')!.checked = true;
     pastBox.checked = false;
     apply();
   });
