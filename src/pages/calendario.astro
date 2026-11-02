@@ -31,6 +31,9 @@ for (const e of sorted) {
   }
 }
 
+const icsPath = import.meta.env.BASE_URL.replace(/\/$/, '') + '/calendario.ics';
+const webcalUrl = new URL(icsPath, Astro.site).href.replace(/^https?:/, 'webcal:');
+
 const years = [...new Set(sorted.map((e) => parseDate(e.date).getFullYear()))];
 
 // Each filter group has one hue family; each item gets its own gradient inside it.
@@ -68,6 +71,12 @@ const fonteFilters = [
         internacionais. Por omissão mostra apenas provas ainda por realizar;
         use os filtros para refinar ou ver provas passadas.
       </p>
+
+      <div class="subscribe">
+        <a class="btn" href={webcalUrl}>Subscrever no meu calendário</a>
+        <a href={icsPath} download="cork-calendario.ics">Descarregar .ics</a>
+        <span class="hint">Funciona com Google Calendar, Apple Calendar e Outlook; atualiza-se automaticamente.</span>
+      </div>
 
       <form class="filters" id="filters" onsubmit="return false">
         <div class="filter-group tipo">
@@ -243,6 +252,27 @@ const fonteFilters = [
     margin-bottom: 2.5rem;
   }
   [hidden] { display: none !important; }
+
+  .subscribe {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin: -1.5rem 0 2rem;
+    font-size: 0.9rem;
+  }
+  .subscribe .btn {
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .subscribe .hint {
+    color: var(--color-ink-soft);
+    font-size: 0.8rem;
+  }
 
   .filters {
     display: flex;
