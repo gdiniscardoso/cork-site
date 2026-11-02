@@ -30,6 +30,13 @@ const { title, description = 'CORK — Cortiçadas Clube Alentejo, clube de atle
         object-src 'none';
         base-uri 'self';"
     />
+    <script is:inline>
+      // Apply a saved theme choice before first paint to avoid a flash.
+      try {
+        var t = localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
     <title>{title} · CORK</title>
     <link rel="icon" type="image/svg+xml" href={import.meta.env.BASE_URL + 'favicon.png'} />
   </head>

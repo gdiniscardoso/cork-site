@@ -5,14 +5,27 @@
   through component files for hex codes.
 */
 :root {
-  --color-primary: #005a96;      /* club blue */
-  --color-primary-dark: #003d66;
-  --color-accent: #00a99e;       /* club teal accent */
-  --color-ink: #1a1f1c;
-  --color-ink-soft: #4a534d;
-  --color-bg: #ffffff;
-  --color-bg-alt: #f4f7f4;
-  --color-border: #e1e8e3;
+  /*
+    Dark mode: light-dark(<light>, <dark>) picks per color-scheme, which follows
+    the OS setting unless the visitor chose a theme (html[data-theme], set by
+    the header toggle). Dark values avoid pure black/white and use lighter,
+    less saturated brand tints so text keeps AA contrast.
+  */
+  color-scheme: light dark;
+
+  /* Text, links and outlines — lightened in dark mode */
+  --color-primary: light-dark(#005a96, #6cb6ee);   /* club blue */
+  --color-accent: light-dark(#00a99e, #2cc4b8);    /* club teal accent */
+  --color-ink: light-dark(#1a1f1c, #e6ebe7);
+  --color-ink-soft: light-dark(#4a534d, #a9b4ad);
+  --color-bg: light-dark(#ffffff, #121614);
+  --color-bg-alt: light-dark(#f4f7f4, #1a201d);
+  --color-border: light-dark(#e1e8e3, #2d3631);
+
+  /* Brand surfaces that carry white text — identical in both themes */
+  --color-brand: #005a96;
+  --color-brand-dark: #003d66;
+  --color-brand-accent: #00a99e;
 
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
@@ -22,6 +35,14 @@
 
 * {
   box-sizing: border-box;
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 html {
@@ -64,7 +85,7 @@ a {
 
 .btn {
   display: inline-block;
-  background: var(--color-primary);
+  background: var(--color-brand);
   color: #fff;
   padding: 0.6rem 1.2rem;
   border-radius: var(--radius);
@@ -76,7 +97,7 @@ a {
 }
 
 .btn:hover {
-  background: var(--color-primary-dark);
+  background: var(--color-brand-dark);
 }
 
 .btn-outline {
@@ -86,7 +107,7 @@ a {
 }
 
 .btn-outline:hover {
-  background: var(--color-primary);
+  background: var(--color-brand);
   color: #fff;
 }
 
