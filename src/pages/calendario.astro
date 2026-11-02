@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import EventItem from '../components/EventItem.astro';
 import EmptyState from '../components/EmptyState.astro';
 import { events, undatedEvents } from '../data/events';
+import { badgeStyle, badgeLabel } from '../data/eventColors';
 
 const parseDate = (s: string) => {
   const [y, m, d] = s.split('-').map(Number);
@@ -40,23 +41,10 @@ const years = [...new Set(sorted.map((e) => parseDate(e.date).getFullYear()))];
 const grad = (h1: number, h2: number) =>
   `--g1: hsl(${h1} 75% 38%); --g2: hsl(${h2} 80% 52%);`;
 
-const tipoFilters = [
-  { value: 'Estrada', style: grad(205, 190) },
-  { value: 'Corta-Mato', style: grad(215, 235) },
-  { value: 'Pista Ar Livre', style: grad(225, 255) },
-  { value: 'Pista Curta', style: grad(235, 275) },
-  { value: 'Trail', style: grad(245, 215) },
-  { value: 'Formação', style: grad(255, 200) },
-];
-const ambitoFilters = [
-  { value: 'Regional', style: grad(150, 170) },
-  { value: 'Nacional', style: grad(130, 100) },
-  { value: 'Internacional', style: grad(110, 150) },
-];
-const fonteFilters = [
-  { value: 'AAE', style: grad(20, 5) },
-  { value: 'FPA', style: grad(35, 50) },
-];
+const withStyle = (values: string[]) => values.map((value) => ({ value, style: badgeStyle(value) }));
+const tipoFilters = withStyle(['Estrada', 'Corta-Mato', 'Pista Ar Livre', 'Pista Curta', 'Trail', 'Formação']);
+const ambitoFilters = withStyle(['Regional', 'Nacional', 'Internacional']);
+const fonteFilters = withStyle(['AAE', 'FPA']);
 ---
 
 <BaseLayout title="Calendário" description="Calendário de provas, treinos e assembleias do CORK — AAE e FPA, 2026/2027.">
@@ -85,7 +73,7 @@ const fonteFilters = [
             {tipoFilters.map((f) => (
               <label class="chip" style={f.style}>
                 <input type="checkbox" name="tipo" value={f.value} checked />
-                <span>{f.value}</span>
+                <span>{badgeLabel(f.value)}</span>
               </label>
             ))}
           </div>
@@ -96,7 +84,7 @@ const fonteFilters = [
             {ambitoFilters.map((f) => (
               <label class="chip" style={f.style}>
                 <input type="checkbox" name="ambito" value={f.value} checked />
-                <span>{f.value}</span>
+                <span>{badgeLabel(f.value)}</span>
               </label>
             ))}
           </div>
@@ -107,7 +95,7 @@ const fonteFilters = [
             {fonteFilters.map((f) => (
               <label class="chip" style={f.style}>
                 <input type="checkbox" name="fonte" value={f.value} checked />
-                <span>{f.value}</span>
+                <span>{badgeLabel(f.value)}</span>
               </label>
             ))}
           </div>
@@ -234,6 +222,20 @@ const fonteFilters = [
     noResults.hidden = total > 0;
   }
 
+  // Within a group, clicking a chip while all are active isolates it ("show only this");
+  // emptying a group goes back to all active.
+  form.addEventListener('click', (e) => {
+    const input = e.target as HTMLInputElement;
+    if (input.type !== 'checkbox' || !input.name) return;
+    const group = [...form.querySelectorAll<HTMLInputElement>(`input[name="${input.name}"]`)];
+    const others = group.filter((i) => i !== input);
+    if (!input.checked && others.every((i) => i.checked)) {
+      input.checked = true;
+      others.forEach((i) => (i.checked = false));
+    } else if (group.every((i) => !i.checked)) {
+      group.forEach((i) => (i.checked = true));
+    }
+  });
   form.addEventListener('change', apply);
   document.getElementById('f-reset')!.addEventListener('click', () => {
     form.querySelectorAll<HTMLInputElement>('input[name]').forEach((i) => (i.checked = true));

@@ -1,4 +1,6 @@
 ---
+import { badgeStyle, badgeLabel, logoFor } from '../data/eventColors';
+
 interface Props {
   date: string;
   endDate?: string;
@@ -17,6 +19,7 @@ const parse = (s: string) => {
   const [y, m, d] = s.split('-').map(Number);
   return new Date(y, m - 1, d);
 };
+const sources = ['AAE', 'FPA'].filter((s) => source?.includes(s));
 const start = parse(date);
 const day = start.getDate();
 const weekday = start.toLocaleDateString('pt-PT', { weekday: 'short' }).replace('.', '');
@@ -42,8 +45,14 @@ if (endDate && endDate !== date) {
       {rangeLabel && <span>{rangeLabel}</span>}
     </div>
     <div class="tags">
-      <span class="tag tag-discipline">{discipline}</span>
-      {scope && <span class="tag">{scope}</span>}
+      <span class="tag tag-colored" style={badgeStyle(discipline)}>{badgeLabel(discipline)}</span>
+      {scope && <span class="tag tag-colored" style={badgeStyle(scope)}>{badgeLabel(scope)}</span>}
+      {sources.map((s) => {
+        const logo = logoFor(s);
+        return logo
+          ? <span class="src-icon" title={s}><img src={logo} alt={s} /></span>
+          : <span class="tag tag-colored" style={badgeStyle(s)}>{s}</span>;
+      })}
     </div>
     {note && <p class="note">{note}</p>}
   </div>
@@ -92,9 +101,31 @@ if (endDate && endDate !== date) {
     flex-wrap: wrap;
     gap: 0.35rem;
   }
-  .tag-discipline {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
+  .tag-colored {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(135deg, var(--g1), var(--g2));
+  }
+  /* AAE/FPA: round icon stretched to the badge row height */
+  .src-icon {
+    position: relative;
+    align-self: center;
+    flex: none;
+    width: 1.5rem; /* = badge height */
+    height: 1.5rem;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid light-dark(var(--color-border), #5b6a61);
+  }
+  /* absolutely positioned so the image's intrinsic size never sets the row height */
+  .src-icon img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 1px;
   }
   .note {
     font-size: 0.82rem;
