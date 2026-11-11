@@ -11,9 +11,11 @@ interface Props {
   scope?: string;
   source?: string;
   note?: string;
+  series?: string;
+  review?: string;
   isPast?: boolean;
 }
-const { date, endDate, title, location, organizer, discipline, scope, source, note, isPast } = Astro.props;
+const { date, endDate, title, location, organizer, discipline, scope, source, note, series, review, isPast } = Astro.props;
 
 const parse = (s: string) => {
   const [y, m, d] = s.split('-').map(Number);
@@ -47,6 +49,7 @@ if (endDate && endDate !== date) {
     <div class="tags">
       <span class="tag tag-colored" style={badgeStyle(discipline)}>{badgeLabel(discipline)}</span>
       {scope && <span class="tag tag-colored" style={badgeStyle(scope)}>{badgeLabel(scope)}</span>}
+      {series && <span class="tag tag-colored" style={badgeStyle(series)}>{badgeLabel(series)}</span>}
       {sources.map((s) => {
         const logo = logoFor(s);
         return logo
@@ -55,6 +58,7 @@ if (endDate && endDate !== date) {
       })}
     </div>
     {note && <p class="note">{note}</p>}
+    {review && <p class="review">⚠️ Por verificar: {review}</p>}
   </div>
 </article>
 
@@ -126,6 +130,15 @@ if (endDate && endDate !== date) {
     height: 100%;
     object-fit: contain;
     padding: 1px;
+  }
+  .review {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #8a5a00;
+    background: #fff4d6;
+    border-left: 3px solid #e0a100;
+    padding: 0.3rem 0.6rem;
+    margin: 0.5rem 0 0;
   }
   .note {
     font-size: 0.82rem;

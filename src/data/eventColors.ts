@@ -14,6 +14,8 @@ const HUES: Record<string, number> = {
   // Fonte
   'AAE': 90,
   'FPA': 195,
+  // Séries (grupos de provas)
+  'Critério Paulo Guerra': 60,
 };
 
 export const badgeStyle = (value: string) => {
@@ -32,6 +34,7 @@ const EMOJIS: Record<string, string> = {
   'Regional': '📍',
   'Nacional': '🏆',
   'Internacional': '🌍',
+  'Critério Paulo Guerra': '🏅',
 };
 
 export const badgeLabel = (value: string) => (EMOJIS[value] ? `${EMOJIS[value]} ${value}` : value);

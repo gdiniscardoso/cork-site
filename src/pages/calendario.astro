@@ -48,6 +48,8 @@ const withStyle = (values: string[]) => values.map((value) => ({ value, style: b
 const tipoFilters = withStyle(['Estrada', 'Corta-Mato', 'Pista Ar Livre', 'Pista Curta', 'Trail', 'Formação']);
 const ambitoFilters = withStyle(['Regional', 'Nacional', 'Internacional']);
 const fonteFilters = withStyle(['AAE', 'FPA']);
+// Séries = grupos de provas (campo `series` em events.ts); novas séries aparecem aqui sozinhas.
+const serieFilters = withStyle([...new Set(events.map((e) => e.series).filter((s): s is string => !!s))]);
 ---
 
 <BaseLayout title="Calendário" description="Calendário de provas, treinos e assembleias do CORK — AAE e FPA, 2026/2027.">
@@ -68,6 +70,10 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
         <a href={icsPath} download="cork-calendario.ics">Descarregar .ics</a>
         <span class="hint">Funciona com Google Calendar, Apple Calendar e Outlook; atualiza-se automaticamente.</span>
       </div>
+
+      <p class="review-banner" id="review-banner" hidden>
+        ⚠️ Modo de revisão: a mostrar também provas por verificar (não visíveis ao público).
+      </p>
 
       <form class="filters" id="filters" onsubmit="return false">
         <div class="filter-group tipo">
@@ -103,6 +109,23 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
             ))}
           </div>
         </div>
+        {serieFilters.length > 0 && (
+          <div class="filter-group serie">
+            <span class="filter-label">Séries</span>
+            <div class="chips">
+              <label class="chip" style={grad(60, 74)}>
+                <input type="radio" name="serie" value="" checked />
+                <span>Todas as provas</span>
+              </label>
+              {serieFilters.map((f) => (
+                <label class="chip" style={f.style}>
+                  <input type="radio" name="serie" value={f.value} />
+                  <span>{badgeLabel(f.value)}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        )}
         <div class="filter-group outros">
           <span class="filter-label">Quando</span>
           <div class="chips">
@@ -135,6 +158,8 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
                   class="ev"
                   data-tipo={e.discipline}
                   data-ambito={e.scope}
+                  data-serie={e.series ?? ''}
+                  data-review={e.review ? '1' : undefined}
                   data-aae={e.source.includes('AAE') ? '1' : '0'}
                   data-fpa={e.source.includes('FPA') ? '1' : '0'}
                   data-year={parseDate(e.date).getFullYear()}
@@ -179,6 +204,10 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
   const groups = [...document.querySelectorAll<HTMLElement>('.month-group')];
   const noResults = document.getElementById('no-results')!;
 
+  // Provas por verificar (data-review) só aparecem com ?rever=1
+  const showReview = new URLSearchParams(location.search).has('rever');
+  document.getElementById('review-banner')!.hidden = !showReview;
+
   const pad = (n: number) => String(n).padStart(2, '0');
   const now = new Date();
   const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
@@ -193,9 +222,10 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
     const ambito = checked('ambito');
     const fonte = checked('fonte');
     const showPast = pastBox.checked;
+    const serie = form.querySelector<HTMLInputElement>('input[name="serie"]:checked')?.value ?? '';
 
     // Month chips: without past events, only months that still have something upcoming.
-    const upcoming = new Set(evs.filter((el) => el.dataset.end! >= today).map((el) => `${el.dataset.year}-${el.dataset.month}`));
+    const upcoming = new Set(evs.filter((el) => el.dataset.end! >= today && (showReview || !el.dataset.review)).map((el) => `${el.dataset.year}-${el.dataset.month}`));
     for (const chip of monthChips) chip.hidden = !showPast && !upcoming.has(chip.dataset.monthChip!);
     let month = form.querySelector<HTMLInputElement>('input[name="quando"]:checked')!.value;
     if (month && monthChips.find((c) => c.dataset.monthChip === month)!.hidden) {
@@ -208,9 +238,11 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
       const isPast = d.end! < today;
       el.firstElementChild?.classList.toggle('past', isPast);
       el.hidden = !(
+        (showReview || !d.review) &&
         tipo.has(d.tipo!) &&
         ambito.has(d.ambito!) &&
         ((fonte.has('AAE') && d.aae === '1') || (fonte.has('FPA') && d.fpa === '1')) &&
+        (!serie || d.serie === serie) &&
         (!month || `${d.year}-${d.month}` === month) &&
         (showPast || !isPast)
       );
@@ -244,6 +276,8 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
   document.getElementById('f-reset')!.addEventListener('click', () => {
     form.querySelectorAll<HTMLInputElement>('input[type="checkbox"][name]').forEach((i) => (i.checked = true));
     form.querySelector<HTMLInputElement>('input[name="quando"][value=""]')!.checked = true;
+    const allSeries = form.querySelector<HTMLInputElement>('input[name="serie"][value=""]');
+    if (allSeries) allSeries.checked = true;
     pastBox.checked = false;
     apply();
   });
@@ -257,6 +291,17 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
     margin-bottom: 2.5rem;
   }
   [hidden] { display: none !important; }
+
+  .review-banner {
+    margin: -1rem 0 1.5rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    background: #fff4d6;
+    color: #8a5a00;
+    border: 1px solid #e0a100;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
 
   .subscribe {
     display: flex;
@@ -300,6 +345,7 @@ const fonteFilters = withStyle(['AAE', 'FPA']);
   .filter-group.tipo { --group: hsl(225 75% 45%); }
   .filter-group.ambito { --group: hsl(135 60% 38%); }
   .filter-group.fonte { --group: hsl(25 85% 50%); }
+  .filter-group.serie { --group: hsl(48 85% 42%); }
   .filter-group.outros { --group: hsl(285 60% 50%); }
   .filter-label {
     font-size: 0.8rem;

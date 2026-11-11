@@ -1,6 +1,7 @@
-// Gerado a partir do calendário combinado AAE (V2, 02/11/2026) + Projeto de Calendário
-// Nacional FPA (versão 10/09/2026). Para atualizar, adicione/edite entradas aqui —
-// o layout das páginas de calendário não precisa de ser tocado.
+// Gerado a partir do calendário combinado AAE (V2, 02/11/2026; reconferido com
+// docs/calendario_aae_nov2026.pdf) + Projeto de Calendário Nacional FPA (versão
+// 10/09/2026). Para atualizar, adicione/edite entradas aqui — o layout das páginas
+// de calendário não precisa de ser tocado.
 
 export interface EventEntry {
   /** ISO date (YYYY-MM-DD) */
@@ -15,6 +16,13 @@ export interface EventEntry {
   scope: 'Regional' | 'Nacional' | 'Internacional';
   source: 'Só AAE' | 'Só FPA' | 'AAE + FPA';
   note?: string;
+  /** Group of races forming one circuit/series (shown as a filter + badge), e.g. 'Critério Paulo Guerra'. */
+  series?: string;
+  /**
+   * Por verificar: o motivo. Eventos com `review` ficam ocultos para o público (página e .ics)
+   * e só aparecem em /calendario?rever=1, com um aviso ⚠️.
+   */
+  review?: string;
 }
 
 export interface UndatedEntry {
@@ -39,7 +47,8 @@ export const events: EventEntry[] = [
   },
   {
     date: '2026-10-18',
-    title: 'I Corrida Solidária «Em cada criança uma Esperança»',
+    title: 'I Corrida Solidária FOCUS «Em cada criança uma Esperança»',
+    review: 'Nome alterado no PDF de nov/2026 (antes sem «FOCUS»); o PDF não indica organizador.',
     location: 'Alcáçovas',
     organizer: 'AAE',
     discipline: 'Estrada',
@@ -248,6 +257,7 @@ export const events: EventEntry[] = [
   {
     date: '2026-12-19',
     title: 'XXVIII Critério de Corta-Mato Paulo Guerra – 1ª prova',
+    series: 'Critério Paulo Guerra',
     location: 'Alandroal',
     organizer: 'AAE / CIMAC / CMA',
     discipline: 'Corta-Mato',
@@ -266,6 +276,7 @@ export const events: EventEntry[] = [
   {
     date: '2027-01-09',
     title: 'XXVIII Critério de Corta-Mato Paulo Guerra – 2ª prova',
+    series: 'Critério Paulo Guerra',
     location: 'Vila Viçosa',
     organizer: 'AAE / CMVV / CIMAC',
     discipline: 'Corta-Mato',
@@ -331,6 +342,7 @@ export const events: EventEntry[] = [
   {
     date: '2027-01-23',
     title: 'XXVIII Critério de Corta-Mato Paulo Guerra – 3ª prova',
+    series: 'Critério Paulo Guerra',
     location: 'Vendas Novas',
     organizer: 'AAE / CMVN / CIMAC',
     discipline: 'Corta-Mato',
@@ -454,6 +466,7 @@ export const events: EventEntry[] = [
   {
     date: '2027-02-20',
     title: 'XXVIII Critério de Corta-Mato Paulo Guerra – 4ª prova',
+    series: 'Critério Paulo Guerra',
     location: 'Redondo',
     organizer: 'AAE / CMR / CIMAC',
     discipline: 'Corta-Mato',
@@ -463,6 +476,7 @@ export const events: EventEntry[] = [
   {
     date: '2027-02-27',
     title: 'XXVIII Critério de Corta-Mato Paulo Guerra – 5ª prova',
+    series: 'Critério Paulo Guerra',
     location: 'Évora',
     organizer: 'AAE / CME / CIMAC',
     discipline: 'Corta-Mato',
@@ -519,6 +533,18 @@ export const events: EventEntry[] = [
     discipline: 'Pista Curta',
     scope: 'Nacional',
     source: 'AAE + FPA',
+  },
+  {
+    date: '2027-03-06',
+    endDate: '2027-03-07',
+    title: 'Campeonatos Nacionais Universitários em Pista Curta',
+    location: 'A designar',
+    organizer: 'FADU',
+    discipline: 'Pista Curta',
+    scope: 'Nacional',
+    source: 'Só AAE',
+    note: 'Listado duas vezes no calendário da AAE (também a 6-7 fev.).',
+    review: 'Novo no PDF de nov/2026: listado a 6-7 fev. e a 6-7 mar. — confirmar qual a data correta.',
   },
   {
     date: '2027-03-06',
@@ -599,6 +625,7 @@ export const events: EventEntry[] = [
   {
     date: '2027-03-20',
     title: 'XXVIII Critério de Corta-Mato Paulo Guerra – 6ª prova',
+    series: 'Critério Paulo Guerra',
     location: 'Reguengos de Monsaraz',
     organizer: 'AAE / CMRM / CIMAC',
     discipline: 'Corta-Mato',

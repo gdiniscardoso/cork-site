@@ -54,11 +54,13 @@ export const GET: APIRoute = ({ site }) => {
     'X-PUBLISHED-TTL:PT12H',
   ];
 
-  for (const e of events) {
+  // Provas por verificar (e.review) ficam fora do feed público.
+  for (const e of events.filter((e) => !e.review)) {
     const end = e.endDate ?? e.date;
     const description = [
       e.organizer && `Organização: ${e.organizer}`,
       `${e.discipline} · ${e.scope}`,
+      e.series && `Série: ${e.series}`,
       e.note,
     ]
       .filter(Boolean)
@@ -73,7 +75,7 @@ export const GET: APIRoute = ({ site }) => {
       `SUMMARY:${escapeText(e.title)}`,
       `LOCATION:${escapeText(e.location)}`,
       `DESCRIPTION:${escapeText(description)}`,
-      `CATEGORIES:${escapeText(e.discipline)}`,
+      `CATEGORIES:${[e.discipline, e.series].filter(Boolean).map((c) => escapeText(c!)).join(',')}`,
       'TRANSP:TRANSPARENT',
       'END:VEVENT'
     );
