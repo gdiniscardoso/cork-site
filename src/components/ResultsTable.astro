@@ -1,58 +1,289 @@
 ---
 interface Row {
-  athlete: string;
-  event: string;
-  date: Date;
-  competition: string;
-  result: string;
-  category?: string;
+  pos: number;
+  posGeral?: number;
+  dorsal: number;
+  name: string;
+  year: number;
+  club: string;
+  escalao: string;
+  sexo: 'FEM' | 'MASC';
+  time: string;
+  extra?: boolean;
 }
 interface Props {
   rows: Row[];
 }
 const { rows } = Astro.props;
+
+const uniq = (vals: (string | number)[]) =>
+  [...new Set(vals)].sort((a, b) => String(a).localeCompare(String(b), 'pt', { numeric: true }));
+const clubs = uniq(rows.map((r) => r.club));
+const escaloes = uniq(rows.map((r) => r.escalao));
+const years = uniq(rows.map((r) => r.year));
+const sexLabel = (s: string) => (s === 'FEM' ? 'Feminino' : 'Masculino');
+const sexShort = (s: string) => (s === 'FEM' ? 'F' : 'M');
+
+// One section per published list: escalão + sex. The veterans' M 60/65/70 share one list.
+const ORDER = ['SUB 10', 'SUB 12', 'SUB 14', 'SUB 16', 'SUB 18', 'SUB 20', 'SENIOR', 'M 35', 'M 40', 'M 45', 'M 50', 'M 55', 'M 60+'];
+const listOf = (e: string) => (/^M (60|65|70)$/.test(e) ? 'M 60+' : e);
+const sections: { key: string; escalao: string; sexo: 'FEM' | 'MASC'; rows: Row[] }[] = [];
+for (const r of rows) {
+  const escalao = listOf(r.escalao);
+  const key = escalao + '|' + r.sexo;
+  let sec = sections.find((x) => x.key === key);
+  if (!sec) {
+    sec = { key, escalao, sexo: r.sexo, rows: [] };
+    sections.push(sec);
+  }
+  sec.rows.push(r);
+}
+sections.sort(
+  (a, b) =>
+    ORDER.indexOf(a.escalao) - ORDER.indexOf(b.escalao) ||
+    (a.sexo === 'FEM' ? 0 : 1) - (b.sexo === 'FEM' ? 0 : 1)
+);
+sections.forEach((sec) => sec.rows.sort((a, b) => a.pos - b.pos));
 ---
 
-<div class="table-wrap card">
-  <table>
-    <thead>
-      <tr>
-        <th>Atleta</th>
-        <th>Prova</th>
-        <th>Resultado</th>
-        <th>Competição</th>
-        <th>Data</th>
-        <th>Categoria</th>
-      </tr>
-    </thead>
-    <tbody>
-      {rows.map((r) => (
-        <tr>
-          <td>{r.athlete}</td>
-          <td>{r.event}</td>
-          <td class="result">{r.result}</td>
-          <td>{r.competition}</td>
-          <td>{r.date.toLocaleDateString('pt-PT')}</td>
-          <td>{r.category ?? '—'}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
+<div class="results" data-results>
+  <div class="filter-bar card">
+    <div class="filter-grid">
+      <label>Class.<input type="search" data-f="pos" inputmode="numeric" /></label>
+      <label>Dorsal<input type="search" data-f="dorsal" inputmode="numeric" /></label>
+      <label class="wide">Atleta<input type="search" data-f="name" /></label>
+      <label>Ano
+        <select data-f="year"><option value="">Todos</option>{years.map((y) => <option value={String(y)}>{y}</option>)}</select>
+      </label>
+      <label>Clube
+        <select data-f="club"><option value="">Todos</option>{clubs.map((c) => <option value={c}>{c}</option>)}</select>
+      </label>
+      <label>Escalão
+        <select data-f="escalao"><option value="">Todos</option>{escaloes.map((e) => <option value={e}>{e}</option>)}</select>
+      </label>
+      <label>Sexo
+        <select data-f="sexo"><option value="">Todos</option><option value="FEM">Feminino</option><option value="MASC">Masculino</option></select>
+      </label>
+      <label>Tempo<input type="search" data-f="time" /></label>
+    </div>
+    <div class="toolbar">
+      <label class="only-cork"><input type="checkbox" data-only-cork /><span>Só atletas do CORK</span></label>
+      <span class="count" data-count aria-live="polite"></span>
+      <button type="button" class="reset" data-reset>Repor filtros</button>
+    </div>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Escalão e sexo">
+    <button type="button" role="tab" class="tab" data-tab="" aria-selected="true">Todas</button>
+    {sections.map((sec) => (
+      <button type="button" role="tab" class:list={['tab', sec.sexo.toLowerCase()]} data-tab={sec.key} aria-selected="false">
+        {sec.escalao} {sexShort(sec.sexo)}
+      </button>
+    ))}
+  </div>
+
+  {sections.map((sec) => (
+    <section class="sec" data-section={sec.key}>
+      <h3>{sec.escalao} · {sexLabel(sec.sexo)} <span class="sec-count"></span></h3>
+      <div class="table-wrap card">
+        <table>
+          <thead>
+            <tr><th>Class.</th><th>Dorsal</th><th>Atleta</th><th>Ano</th><th>Clube</th><th>Escalão</th><th>Sexo</th><th>Tempo</th></tr>
+          </thead>
+          <tbody>
+            {sec.rows.map((r) => (
+              <tr
+                class:list={[{ cork: r.club === 'CORK' }]}
+                data-pos={r.pos}
+                data-dorsal={r.dorsal}
+                data-name={r.name}
+                data-year={r.year}
+                data-club={r.club}
+                data-escalao={r.escalao}
+                data-sexo={r.sexo}
+                data-time={r.time}
+              >
+                <td class="num">
+                  {r.pos}º
+                  {r.posGeral && <span class="geral" title="Classificação geral de veteranos">({r.posGeral}º geral)</span>}
+                </td>
+                <td class="num">{r.dorsal}</td>
+                <td class="name">
+                  {r.name}
+                  {r.extra && <span class="extra" title="Atleta extra (não pontua)">extra</span>}
+                </td>
+                <td class="num">{r.year}</td>
+                <td>{r.club}</td>
+                <td>{r.escalao}</td>
+                <td>{sexLabel(r.sexo)}</td>
+                <td class="result">{r.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  ))}
+  <p class="no-match" data-empty hidden>Nenhum resultado com estes filtros.</p>
 </div>
 
 <style>
-  .table-wrap {
-    padding: 0;
-    overflow-x: auto;
+  .filter-bar { margin-bottom: 1rem; padding: 1rem; }
+  .filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 0.6rem 0.75rem;
   }
-  table {
-    margin: 0;
+  .filter-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-ink-soft);
   }
-  th, td {
-    padding: 0.75rem 1rem;
+  .filter-grid .wide { grid-column: span 2; }
+  .filter-grid input, .filter-grid select {
+    width: 100%;
+    min-width: 0;
+    font: inherit;
+    font-size: 0.9rem;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-bg);
+    color: var(--color-ink);
   }
-  .result {
-    font-weight: 700;
+  .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; margin-top: 0.9rem; }
+  .only-cork { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600; cursor: pointer; }
+  .count { color: var(--color-ink-soft); font-size: 0.9rem; }
+  .reset {
+    background: none;
+    border: 1px solid var(--color-border);
     color: var(--color-primary);
+    border-radius: 999px;
+    padding: 0.3rem 0.9rem;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
   }
+  .toolbar .reset { margin-left: auto; }
+
+  .tabs {
+    display: flex;
+    gap: 0.25rem;
+    overflow-x: auto;
+    border-bottom: 2px solid var(--color-border);
+    margin-bottom: 1.25rem;
+    scrollbar-width: thin;
+  }
+  .tab {
+    flex: none;
+    background: none;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    padding: 0.6rem 0.9rem;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .tab:hover { color: var(--color-primary); }
+  .tab[aria-selected='true'] { color: var(--color-primary); border-bottom-color: var(--color-brand); }
+  .tab.fem[aria-selected='true'] { border-bottom-color: var(--color-brand-accent); }
+  .tab.dim { opacity: 0.4; }
+  .tab:focus-visible { outline: 2px solid var(--color-primary); outline-offset: -2px; }
+
+  .sec { margin-bottom: 2rem; }
+  .sec h3 { margin: 0 0 0.5rem; }
+  .sec-count { font-size: 0.85rem; font-weight: 400; color: var(--color-ink-soft); margin-left: 0.4rem; }
+  .table-wrap { padding: 0; overflow-x: auto; }
+  table { margin: 0; min-width: 640px; }
+  th, td { padding: 0.6rem 0.75rem; }
+  .num { font-variant-numeric: tabular-nums; }
+  .result { font-weight: 700; font-variant-numeric: tabular-nums; }
+  tr.cork td { background: color-mix(in srgb, var(--color-accent) 18%, transparent); font-weight: 600; }
+  tr.cork td:first-child { box-shadow: inset 4px 0 0 var(--color-accent); }
+  tr.cork .result { color: var(--color-primary); }
+  .geral, .extra { font-size: 0.75rem; font-weight: 400; color: var(--color-ink-soft); margin-left: 0.25rem; }
+  .extra { border: 1px solid var(--color-border); border-radius: 999px; padding: 0 0.4rem; }
+  .no-match { text-align: center; padding: 1.5rem; color: var(--color-ink-soft); margin: 0; }
 </style>
+
+<script>
+  const norm = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+
+  document.querySelectorAll<HTMLElement>('[data-results]').forEach((root) => {
+    const sections = [...root.querySelectorAll<HTMLElement>('[data-section]')];
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    let current = ''; // '' = Todas
+    const fields = [...root.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[data-f]')];
+    const onlyCork = root.querySelector<HTMLInputElement>('[data-only-cork]')!;
+    const count = root.querySelector<HTMLElement>('[data-count]')!;
+    const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+    const total = root.querySelectorAll('tbody tr').length;
+
+    function apply() {
+      const active = fields
+        .map((f) => ({ key: f.dataset.f!, value: f.value, exact: f.tagName === 'SELECT' }))
+        .filter((f) => f.value.trim() !== '');
+      let shown = 0;
+      for (const sec of sections) {
+        let secShown = 0;
+        for (const tr of sec.querySelectorAll<HTMLTableRowElement>('tbody tr')) {
+          const d = tr.dataset;
+          let ok = !onlyCork.checked || d.club === 'CORK';
+          for (const f of active) {
+            if (!ok) break;
+            const cell = d[f.key] ?? '';
+            if (f.exact) ok = cell === f.value;
+            else if (f.key === 'pos' || f.key === 'dorsal') ok = cell === f.value.trim().replace(/º$/, '');
+            else ok = norm(cell).includes(norm(f.value));
+          }
+          tr.hidden = !ok;
+          if (ok) secShown++;
+        }
+        sec.querySelector('.sec-count')!.textContent = `(${secShown} atletas)`;
+        const tab = tabs.find((t) => t.dataset.tab === sec.dataset.section);
+        tab?.classList.toggle('dim', secShown === 0);
+        sec.hidden = (current !== '' && sec.dataset.section !== current) || secShown === 0;
+        if (!sec.hidden) shown += secShown;
+      }
+      count.textContent = `${shown} de ${total} atletas`;
+      empty.hidden = shown > 0;
+    }
+
+    function select(key: string) {
+      current = key;
+      for (const t of tabs) t.setAttribute('aria-selected', String(t.dataset.tab === key));
+      apply();
+    }
+
+    fields.forEach((f) => f.addEventListener(f.tagName === 'SELECT' ? 'change' : 'input', apply));
+    onlyCork.addEventListener('change', apply);
+    tabs.forEach((t, i) => {
+      t.addEventListener('click', () => select(t.dataset.tab!));
+      t.addEventListener('keydown', (e) => {
+        const next = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : -1;
+        if (next < 0 || next >= tabs.length) return;
+        e.preventDefault();
+        tabs[next].focus();
+        select(tabs[next].dataset.tab!);
+      });
+    });
+    root.querySelector('[data-reset]')!.addEventListener('click', () => {
+      fields.forEach((f) => (f.value = ''));
+      onlyCork.checked = false;
+      select('');
+    });
+    apply();
+  });
+</script>

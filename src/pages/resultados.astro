@@ -4,23 +4,32 @@ import ResultsTable from '../components/ResultsTable.astro';
 import EmptyState from '../components/EmptyState.astro';
 import { getCollection } from 'astro:content';
 
-const allResults = (await getCollection('results')).sort(
+const races = (await getCollection('results')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
-const rows = allResults.map((r) => r.data);
 ---
 
-<BaseLayout title="Resultados" description="Resultados individuais dos atletas do CORK.">
+<BaseLayout title="Resultados" description="Resultados das provas em que participam os atletas do CORK.">
   <section class="section">
     <div class="container">
       <p class="eyebrow">Atletas</p>
       <h1>Resultados</h1>
       <p class="intro">
-        Resultados pessoais dos atletas do clube em competições oficiais.
-        Cada resultado é um ficheiro de dados — adicionar um novo é publicar
-        um novo registo, sem tocar no design da página.
+        Classificações completas das provas oficiais. Os atletas do CORK
+        aparecem destacados; use os filtros em cada coluna para encontrar
+        um atleta, clube ou escalão.
       </p>
-      {rows.length === 0 ? <EmptyState /> : <ResultsTable rows={rows} />}
+      {races.length === 0 && <EmptyState />}
+      {races.map((r) => (
+        <article class="race">
+          <h2>{r.data.competition}</h2>
+          <p class="meta">
+            {r.data.location && <>{r.data.location} · </>}
+            {r.data.date.toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </p>
+          <ResultsTable rows={r.data.rows} />
+        </article>
+      ))}
     </div>
   </section>
 </BaseLayout>
@@ -31,4 +40,7 @@ const rows = allResults.map((r) => r.data);
     max-width: 640px;
     margin-bottom: 2rem;
   }
+  .race { margin-bottom: 3rem; }
+  .race h2 { margin-bottom: 0.25rem; }
+  .meta { color: var(--color-ink-soft); margin: 0 0 1rem; }
 </style>

@@ -13,16 +13,30 @@ const news = defineCollection({
   }),
 });
 
-// Athlete results: one JSON file per season/event, listed in src/content/results/
+// Race results: one JSON file per race in src/content/results/, holding every
+// athlete of the race (not just the club's). Rows from the club CORK are
+// highlighted on the page. `pos` = rank in the escalão list; `posGeral` =
+// rank in the veterans' overall list (veterans only).
 const results = defineCollection({
   type: 'data',
   schema: z.object({
-    athlete: z.string(),
-    event: z.string(),
-    date: z.coerce.date(),
     competition: z.string(),
-    result: z.string(),
-    category: z.string().optional(),
+    location: z.string().optional(),
+    date: z.coerce.date(),
+    rows: z.array(
+      z.object({
+        pos: z.number(),
+        posGeral: z.number().optional(),
+        dorsal: z.number(),
+        name: z.string(),
+        year: z.number(),
+        club: z.string(),
+        escalao: z.string(),
+        sexo: z.enum(['FEM', 'MASC']),
+        time: z.string(),
+        extra: z.boolean().optional(),
+      })
+    ),
   }),
 });
 
