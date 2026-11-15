@@ -32,17 +32,30 @@ const nextEvent = upcomingEvents[0];
 const allResults = await getCollection('results');
 const records = allResults
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .flatMap((r) =>
-    r.data.rows
+  .flatMap((r) => {
+    const dateLabel = r.data.date.toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' });
+    const cross = r.data.rows
       .filter((x) => x.club === 'CORK')
       .map((x) => ({
         athlete: x.name,
         event: `${x.escalao} ${x.sexo === 'FEM' ? 'Fem.' : 'Masc.'}`,
         result: `${x.pos}º · ${x.time}`,
         competition: r.data.competition,
-        dateLabel: r.data.date.toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' }),
-      }))
-  );
+        dateLabel,
+      }));
+    const track = r.data.events.flatMap((ev) =>
+      ev.rows
+        .filter((x) => x.club === 'CORK' && x.pos)
+        .map((x) => ({
+          athlete: x.name,
+          event: `${ev.discipline} ${ev.category} ${ev.sexo === 'FEM' ? 'Fem.' : 'Masc.'}`,
+          result: `${x.pos}º · ${x.mark} ${ev.unit}`,
+          competition: r.data.competition,
+          dateLabel,
+        }))
+    );
+    return [...cross, ...track];
+  });
 const firstRecord = records[0];
 
 const carouselSlides: Slide[] = [

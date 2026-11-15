@@ -1,0 +1,787 @@
+{
+ "competition": "Torneio de Abertura de Pista",
+ "location": "Vendas Novas",
+ "date": "2026-11-14",
+ "events": [
+  {
+   "discipline": "Lançamento do Peso 3kg",
+   "category": "Sub-16",
+   "sexo": "FEM",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Sofia Leitão",
+     "club": "RC",
+     "escalao": "Sub-16",
+     "mark": "9.69"
+    },
+    {
+     "pos": 2,
+     "name": "Beatriz Martins",
+     "club": "GDPAV",
+     "escalao": "Sub-16",
+     "mark": "7.52"
+    }
+   ]
+  },
+  {
+   "discipline": "Lançamento do Peso 4kg",
+   "category": "Sub-18",
+   "sexo": "FEM",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Mária Mestrinho",
+     "club": "CORK",
+     "escalao": "Sénior",
+     "mark": "7.9"
+    },
+    {
+     "pos": 2,
+     "name": "Rute Galinha",
+     "club": "CORK",
+     "escalao": "M 35",
+     "mark": "7.73"
+    },
+    {
+     "pos": 3,
+     "name": "Raquel Ramos",
+     "club": "RC",
+     "escalao": "Sub-20",
+     "mark": "6.83"
+    },
+    {
+     "pos": 4,
+     "name": "Cláudia Gaspar",
+     "club": "AJL",
+     "escalao": "M 50",
+     "mark": "5.3"
+    }
+   ]
+  },
+  {
+   "discipline": "Lançamento do Peso 4kg",
+   "category": "Absoluto",
+   "sexo": "FEM",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Mária Mestrinho",
+     "club": "CORK",
+     "escalao": "Sénior",
+     "mark": "8.15"
+    },
+    {
+     "pos": 2,
+     "name": "Rute Galinha",
+     "club": "CORK",
+     "escalao": "M 35",
+     "mark": "7.73"
+    },
+    {
+     "pos": 3,
+     "name": "Raquel Ramos",
+     "club": "RC",
+     "escalao": "Sub-20",
+     "mark": "6.83"
+    },
+    {
+     "pos": 4,
+     "name": "Cláudia Gaspar",
+     "club": "AJL",
+     "escalao": "M 50",
+     "mark": "5.3"
+    }
+   ]
+  },
+  {
+   "discipline": "Salto em Comprimento",
+   "category": "Sub-16",
+   "sexo": "MASC",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Afonso Paulino",
+     "club": "AJL",
+     "escalao": "Sub-16",
+     "mark": "4.02",
+     "wind": "-0.4"
+    },
+    {
+     "pos": 2,
+     "name": "Gonçalo Anastácio",
+     "club": "CORK",
+     "escalao": "Sub-16",
+     "mark": "3.72",
+     "wind": "-0.1"
+    },
+    {
+     "name": "Vasco Raminhos",
+     "club": "GDPAV",
+     "escalao": "Sub-16",
+     "status": "SM"
+    }
+   ]
+  },
+  {
+   "discipline": "Salto em Comprimento",
+   "category": "Sub-18",
+   "sexo": "MASC",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Martim Pinto",
+     "club": "GDD",
+     "escalao": "Sub-18",
+     "mark": "5.66",
+     "wind": "-0.6"
+    },
+    {
+     "pos": 2,
+     "name": "Afonso Martins",
+     "club": "GDPAV",
+     "escalao": "Sub-18",
+     "mark": "4.75",
+     "wind": "-0.6"
+    },
+    {
+     "name": "João Mira",
+     "club": "CORK",
+     "escalao": "Sub-18",
+     "status": "DNS"
+    }
+   ]
+  },
+  {
+   "discipline": "Lançamento do Dardo 600g",
+   "category": "Sub-16",
+   "sexo": "MASC",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Rúben Vieira",
+     "club": "GDPAV",
+     "escalao": "Sub-16",
+     "mark": "34.57"
+    },
+    {
+     "pos": 2,
+     "name": "João Papança",
+     "club": "GDD",
+     "escalao": "Sub-16",
+     "mark": "25.84"
+    }
+   ]
+  },
+  {
+   "discipline": "Lançamento do Dardo 700g",
+   "category": "Sub-18",
+   "sexo": "MASC",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "David Aguiar",
+     "club": "SCP",
+     "escalao": "Sub-18",
+     "mark": "39.2"
+    },
+    {
+     "pos": 2,
+     "name": "Gabriel Carriço",
+     "club": "AJL",
+     "escalao": "Sub-18",
+     "mark": "29.14"
+    }
+   ]
+  },
+  {
+   "discipline": "Lançamento do Dardo 800g",
+   "category": "Absoluto",
+   "sexo": "MASC",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Lucas Iatco",
+     "club": "GDPAV",
+     "escalao": "Sub-23",
+     "mark": "37.25"
+    },
+    {
+     "pos": 2,
+     "name": "Alexandre Basilio",
+     "club": "GDD",
+     "escalao": "Sub-20",
+     "mark": "21.44"
+    },
+    {
+     "pos": 3,
+     "name": "Daniel Silva",
+     "club": "AJL",
+     "escalao": "M 40",
+     "mark": "20.71"
+    }
+   ]
+  },
+  {
+   "discipline": "60 m",
+   "category": "Absoluto",
+   "sexo": "MASC",
+   "unit": "s",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Alexandre Palhas",
+     "club": "CORK",
+     "escalao": "Sub-20",
+     "mark": "7.87"
+    },
+    {
+     "pos": 2,
+     "name": "João Guedes",
+     "club": "CORK",
+     "escalao": "M 40",
+     "mark": "9.29"
+    }
+   ]
+  },
+  {
+   "discipline": "60 m",
+   "category": "Sub-18",
+   "sexo": "MASC",
+   "unit": "s",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Gonçalo Roque",
+     "club": "GDD",
+     "escalao": "Sub-18",
+     "mark": "7.48"
+    },
+    {
+     "pos": 2,
+     "name": "Martim Pinto",
+     "club": "GDD",
+     "escalao": "Sub-18",
+     "mark": "7.84"
+    },
+    {
+     "pos": 3,
+     "name": "Afonso Martins",
+     "club": "GDPAV",
+     "escalao": "Sub-18",
+     "mark": "8.19"
+    },
+    {
+     "pos": 4,
+     "name": "João Mira",
+     "club": "CORK",
+     "escalao": "Sub-18",
+     "mark": "8.2"
+    }
+   ]
+  },
+  {
+   "discipline": "60 m",
+   "category": "Sub-18",
+   "sexo": "FEM",
+   "unit": "s",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Noa Wintacem",
+     "club": "RC",
+     "escalao": "Sub-18",
+     "mark": "8.16"
+    },
+    {
+     "pos": 2,
+     "name": "Leonor Charrua",
+     "club": "RC",
+     "escalao": "Sub-18",
+     "mark": "8.44"
+    }
+   ]
+  },
+  {
+   "discipline": "60 m",
+   "category": "Absoluto",
+   "sexo": "FEM",
+   "unit": "s",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Raquel Ramos",
+     "club": "RC",
+     "escalao": "Sub-20",
+     "mark": "10.21"
+    }
+   ]
+  },
+  {
+   "discipline": "60 m",
+   "category": "Sub-16",
+   "sexo": "MASC",
+   "unit": "s",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Rúben Vieira",
+     "club": "GDPAV",
+     "escalao": "Sub-16",
+     "mark": "8.1"
+    },
+    {
+     "pos": 2,
+     "name": "Afonso Paulino",
+     "club": "AJL",
+     "escalao": "Sub-16",
+     "mark": "9.1"
+    },
+    {
+     "pos": 3,
+     "name": "Gonçalo Anastácio",
+     "club": "CORK",
+     "escalao": "Sub-16",
+     "mark": "9.65"
+    },
+    {
+     "pos": 4,
+     "name": "Vasco Raminhos",
+     "club": "GDPAV",
+     "escalao": "Sub-16",
+     "mark": "9.93"
+    }
+   ]
+  },
+  {
+   "discipline": "60 m",
+   "category": "Sub-16",
+   "sexo": "FEM",
+   "unit": "s",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Maria Carrasquinha",
+     "club": "CORK",
+     "escalao": "Sub-16",
+     "mark": "9.33"
+    }
+   ]
+  },
+  {
+   "discipline": "60 m",
+   "category": "Sub-14",
+   "sexo": "MASC",
+   "unit": "s",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Simão Nunes",
+     "club": "AJL",
+     "escalao": "Sub-14",
+     "mark": "8.22"
+    },
+    {
+     "pos": 2,
+     "name": "Martim Diogo",
+     "club": "AJL",
+     "escalao": "Sub-14",
+     "mark": "9.03"
+    },
+    {
+     "pos": 3,
+     "name": "Matheus Cardoso",
+     "club": "GDPAV",
+     "escalao": "Sub-14",
+     "mark": "9.08"
+    },
+    {
+     "pos": 4,
+     "name": "Santiago Pires",
+     "club": "GDPAV",
+     "escalao": "Sub-14",
+     "mark": "9.14"
+    },
+    {
+     "pos": 5,
+     "name": "Tomé Fernandes",
+     "club": "CORK",
+     "escalao": "Sub-14",
+     "mark": "9.36"
+    },
+    {
+     "pos": 6,
+     "name": "Eduardo Mira",
+     "club": "CORK",
+     "escalao": "Sub-14",
+     "mark": "9.41"
+    },
+    {
+     "pos": 7,
+     "name": "Afonso Ferreira",
+     "club": "AJL",
+     "escalao": "Sub-14",
+     "mark": "9.58"
+    },
+    {
+     "pos": 8,
+     "name": "Rodrigo Elias",
+     "club": "AJL",
+     "escalao": "Sub-14",
+     "mark": "9.67"
+    },
+    {
+     "pos": 9,
+     "name": "Frederico Guedes",
+     "club": "CORK",
+     "escalao": "Sub-12",
+     "mark": "9.71"
+    },
+    {
+     "pos": 10,
+     "name": "Luan Barbosa",
+     "club": "GDPAV",
+     "escalao": "Sub-14",
+     "mark": "9.97"
+    },
+    {
+     "pos": 11,
+     "name": "Tiago Silva",
+     "club": "AJL",
+     "escalao": "Sub-14",
+     "mark": "10.42"
+    },
+    {
+     "pos": 12,
+     "name": "Bruno Moita",
+     "club": "GDPAV",
+     "escalao": "Sub-14",
+     "mark": "10.8"
+    },
+    {
+     "pos": 13,
+     "name": "Theo Teixeira",
+     "club": "CORK",
+     "escalao": "Sub-12",
+     "mark": "10.96"
+    }
+   ]
+  },
+  {
+   "discipline": "60 m",
+   "category": "Sub-14",
+   "sexo": "FEM",
+   "unit": "s",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Maria Reis",
+     "club": "RC",
+     "escalao": "Sub-14",
+     "mark": "8.64"
+    },
+    {
+     "pos": 2,
+     "name": "Alice Martins",
+     "club": "GDPAV",
+     "escalao": "Sub-14",
+     "mark": "9.3"
+    },
+    {
+     "pos": 3,
+     "name": "Mariana Sequeira",
+     "club": "GDPAV",
+     "escalao": "Sub-14",
+     "mark": "9.7"
+    },
+    {
+     "pos": 4,
+     "name": "Sofia Almeida",
+     "club": "AJL",
+     "escalao": "Sub-12",
+     "mark": "9.76"
+    },
+    {
+     "pos": 5,
+     "name": "Joana Varandas",
+     "club": "GDPAV",
+     "escalao": "Sub-14",
+     "mark": "10.06"
+    },
+    {
+     "pos": 6,
+     "name": "Núria Laranjo",
+     "club": "GDPAV",
+     "escalao": "Sub-14",
+     "mark": "10.09"
+    },
+    {
+     "pos": 7,
+     "name": "Iara Nunes",
+     "club": "CORK",
+     "escalao": "Sub-12",
+     "mark": "10.19"
+    },
+    {
+     "pos": 8,
+     "name": "Margarida Oliveira",
+     "club": "CORK",
+     "escalao": "Sub-14",
+     "mark": "10.44"
+    },
+    {
+     "pos": 9,
+     "name": "Ema Ventura",
+     "club": "GDPAV",
+     "escalao": "Sub-14",
+     "mark": "10.46"
+    },
+    {
+     "pos": 10,
+     "name": "Yara Figueiredo",
+     "club": "AJL",
+     "escalao": "Sub-12",
+     "mark": "10.5"
+    },
+    {
+     "pos": 11,
+     "name": "Juliana Prates",
+     "club": "GDPAV",
+     "escalao": "Sub-14",
+     "mark": "10.55"
+    },
+    {
+     "pos": 12,
+     "name": "Carolina Garcia",
+     "club": "GDPAV",
+     "escalao": "Sub-14",
+     "mark": "10.58"
+    },
+    {
+     "pos": 13,
+     "name": "Luana Azevedo",
+     "club": "AJL",
+     "escalao": "Sub-14",
+     "mark": "10.59"
+    },
+    {
+     "pos": 14,
+     "name": "Carolina Ferreira",
+     "club": "AJL",
+     "escalao": "Sub-12",
+     "mark": "10.83"
+    },
+    {
+     "pos": 15,
+     "name": "Maria Pintão",
+     "club": "GDPAV",
+     "escalao": "Sub-14",
+     "mark": "11.19"
+    },
+    {
+     "name": "Lara Pinto",
+     "club": "CORK",
+     "escalao": "Sub-14",
+     "status": "DNS"
+    }
+   ]
+  },
+  {
+   "discipline": "Lançamento do Peso 4kg",
+   "category": "Sub-16",
+   "sexo": "MASC",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Rúben Vieira",
+     "club": "GDPAV",
+     "escalao": "Sub-16",
+     "mark": "10.16"
+    }
+   ]
+  },
+  {
+   "discipline": "Lançamento do Peso 5kg",
+   "category": "Sub-18",
+   "sexo": "MASC",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "David Aguiar",
+     "club": "SCP",
+     "escalao": "Sub-18",
+     "mark": "11.16"
+    },
+    {
+     "pos": 2,
+     "name": "Afonso Martins",
+     "club": "GDPAV",
+     "escalao": "Sub-18",
+     "mark": "9.6"
+    },
+    {
+     "pos": 3,
+     "name": "Gabriel Carriço",
+     "club": "AJL",
+     "escalao": "Sub-18",
+     "mark": "8.84"
+    },
+    {
+     "pos": 4,
+     "name": "Paulo Silva",
+     "club": "RC",
+     "escalao": "Sub-18",
+     "mark": "8.07"
+    }
+   ]
+  },
+  {
+   "discipline": "Lançamento do Peso 7,260kg",
+   "category": "Absoluto",
+   "sexo": "MASC",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Tiago Lança",
+     "club": "CORK",
+     "escalao": "Sénior",
+     "mark": "6.76"
+    },
+    {
+     "pos": 2,
+     "name": "Tiago Teodoro",
+     "club": "CORK",
+     "escalao": "Sub-23",
+     "mark": "6.13"
+    }
+   ]
+  },
+  {
+   "discipline": "Salto em Comprimento",
+   "category": "Sub-16",
+   "sexo": "FEM",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Maria Carrasquinha",
+     "club": "CORK",
+     "escalao": "Sub-16",
+     "mark": "4.3",
+     "wind": "-0.2"
+    },
+    {
+     "pos": 2,
+     "name": "Beatriz Martins",
+     "club": "GDPAV",
+     "escalao": "Sub-16",
+     "mark": "3.58",
+     "wind": "-0.4"
+    }
+   ]
+  },
+  {
+   "discipline": "Salto em Comprimento",
+   "category": "Sub-18",
+   "sexo": "FEM",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Noa Wintacem",
+     "club": "RC",
+     "escalao": "Sub-18",
+     "mark": "4.62",
+     "wind": "-0.4"
+    },
+    {
+     "pos": 2,
+     "name": "Leonor Charrua",
+     "club": "RC",
+     "escalao": "Sub-18",
+     "mark": "4.48",
+     "wind": "-0.4"
+    }
+   ]
+  },
+  {
+   "discipline": "Salto em Comprimento",
+   "category": "Absoluto",
+   "sexo": "FEM",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Beatriz Santos",
+     "club": "GDD",
+     "escalao": "Sub-20",
+     "mark": "4.74",
+     "wind": "-0.5"
+    },
+    {
+     "pos": 2,
+     "name": "Mária Mestrinho",
+     "club": "CORK",
+     "escalao": "Sénior",
+     "mark": "4.45",
+     "wind": "-0.2"
+    }
+   ]
+  },
+  {
+   "discipline": "Lançamento do Dardo 500g",
+   "category": "Sub-16",
+   "sexo": "FEM",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Beatriz Martins",
+     "club": "GDPAV",
+     "escalao": "Sub-16",
+     "mark": "23.99"
+    }
+   ]
+  },
+  {
+   "discipline": "Lançamento do Dardo 600g",
+   "category": "Absoluto",
+   "sexo": "FEM",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Rute Galinha",
+     "club": "CORK",
+     "escalao": "M 35",
+     "mark": "21.15"
+    },
+    {
+     "pos": 2,
+     "name": "Cláudia Gaspar",
+     "club": "AJL",
+     "escalao": "M 50",
+     "mark": "13.04"
+    },
+    {
+     "pos": 3,
+     "name": "Raquel Ramos",
+     "club": "RC",
+     "escalao": "Sub-20",
+     "mark": "12.66"
+    }
+   ]
+  }
+ ]
+}

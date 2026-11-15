@@ -104,7 +104,7 @@ sections.forEach((sec) => sec.rows.sort((a, b) => a.pos - b.pos));
                 data-time={r.time}
               >
                 <td class="num">
-                  {r.pos}º
+                  {r.pos <= 3 && <span aria-hidden="true">{['🥇', '🥈', '🥉'][r.pos - 1]} </span>}{r.pos}º
                   {r.posGeral && <span class="geral" title="Classificação geral de veteranos">({r.posGeral}º geral)</span>}
                 </td>
                 <td class="num">{r.dorsal}</td>

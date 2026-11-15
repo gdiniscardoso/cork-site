@@ -1,0 +1,92 @@
+---
+interface Row {
+  pos?: number;
+  name: string;
+  club: string;
+  escalao: string;
+  mark?: string;
+  wind?: string;
+  status?: string;
+}
+interface Ev {
+  discipline: string;
+  category: string;
+  sexo: 'FEM' | 'MASC';
+  unit: 's' | 'm';
+  rows: Row[];
+}
+interface Props {
+  events: Ev[];
+}
+const { events } = Astro.props;
+
+const MEDAL: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
+const CAT_ORDER = ['Sub-12', 'Sub-14', 'Sub-16', 'Sub-18', 'Sub-20', 'Absoluto'];
+const sexLabel = (s: string) => (s === 'FEM' ? 'Feminino' : 'Masculino');
+const sorted = [...events].sort(
+  (a, b) =>
+    (a.unit === b.unit ? 0 : a.unit === 's' ? -1 : 1) ||
+    a.discipline.localeCompare(b.discipline, 'pt') ||
+    CAT_ORDER.indexOf(a.category) - CAT_ORDER.indexOf(b.category) ||
+    (a.sexo === 'FEM' ? 0 : 1) - (b.sexo === 'FEM' ? 0 : 1)
+);
+const withCork = (e: Ev) => e.rows.some((r) => r.club === 'CORK');
+---
+
+<div class="events" data-events>
+  <label class="only-cork"><input type="checkbox" data-only-cork /><span>Só provas com atletas do CORK</span></label>
+  {sorted.map((ev) => (
+    <section class="ev" data-cork={withCork(ev) ? '1' : '0'}>
+      <h3>{ev.discipline} · {ev.category} · {sexLabel(ev.sexo)}</h3>
+      <div class="table-wrap card">
+        <table>
+          <thead>
+            <tr><th>Class.</th><th>Atleta</th><th>Clube</th><th>Escalão</th><th>Marca</th></tr>
+          </thead>
+          <tbody>
+            {ev.rows.map((r) => (
+              <tr class:list={[{ cork: r.club === 'CORK' }]} data-club={r.club}>
+                <td class="num">
+                  {r.pos ? <><span class="medal" aria-hidden="true">{MEDAL[r.pos] ?? ''}</span>{r.pos}º</> : '–'}
+                </td>
+                <td class="name">{r.name}</td>
+                <td>{r.club}</td>
+                <td>{r.escalao}</td>
+                <td class="result">
+                  {r.mark ? <>{r.mark} {ev.unit}{r.wind && <span class="wind" title="Vento (m/s)">({r.wind})</span>}</> : (r.status ?? '–')}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  ))}
+</div>
+
+<style>
+  .only-cork { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600; cursor: pointer; margin-bottom: 1rem; }
+  .ev { margin-bottom: 1.75rem; }
+  .ev h3 { margin: 0 0 0.5rem; }
+  .table-wrap { padding: 0; overflow-x: auto; }
+  table { margin: 0; min-width: 480px; }
+  th, td { padding: 0.6rem 0.75rem; }
+  .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .medal { display: inline-block; width: 1.6em; }
+  .result { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .wind { font-size: 0.75rem; font-weight: 400; color: var(--color-ink-soft); margin-left: 0.25rem; }
+  tr.cork td { background: color-mix(in srgb, var(--color-accent) 18%, transparent); font-weight: 600; }
+  tr.cork td:first-child { box-shadow: inset 4px 0 0 var(--color-accent); }
+  tr.cork .result { color: var(--color-primary); }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-events]').forEach((root) => {
+    const box = root.querySelector<HTMLInputElement>('[data-only-cork]')!;
+    box.addEventListener('change', () => {
+      root.querySelectorAll<HTMLElement>('.ev').forEach((s) => {
+        s.hidden = box.checked && s.dataset.cork !== '1';
+      });
+    });
+  });
+</script>

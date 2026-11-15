@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ResultsTable from '../components/ResultsTable.astro';
+import EventResults from '../components/EventResults.astro';
 import EmptyState from '../components/EmptyState.astro';
 import { getCollection } from 'astro:content';
 
@@ -27,7 +28,8 @@ const races = (await getCollection('results')).sort(
             {r.data.location && <>{r.data.location} · </>}
             {r.data.date.toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
-          <ResultsTable rows={r.data.rows} />
+          {r.data.rows.length > 0 && <ResultsTable rows={r.data.rows} />}
+          {r.data.events.length > 0 && <EventResults events={r.data.events} />}
         </article>
       ))}
     </div>

@@ -23,20 +23,45 @@ const results = defineCollection({
     competition: z.string(),
     location: z.string().optional(),
     date: z.coerce.date(),
-    rows: z.array(
-      z.object({
-        pos: z.number(),
-        posGeral: z.number().optional(),
-        dorsal: z.number(),
-        name: z.string(),
-        year: z.number(),
-        club: z.string(),
-        escalao: z.string(),
-        sexo: z.enum(['FEM', 'MASC']),
-        time: z.string(),
-        extra: z.boolean().optional(),
-      })
-    ),
+    rows: z
+      .array(
+        z.object({
+          pos: z.number(),
+          posGeral: z.number().optional(),
+          dorsal: z.number(),
+          name: z.string(),
+          year: z.number(),
+          club: z.string(),
+          escalao: z.string(),
+          sexo: z.enum(['FEM', 'MASC']),
+          time: z.string(),
+          extra: z.boolean().optional(),
+        })
+      )
+      .default([]),
+    // Track & field meets: one entry per event (discipline + category + sex).
+    // Rows without `pos` are non-ranked (status: DNS, SM = no mark...).
+    events: z
+      .array(
+        z.object({
+          discipline: z.string(),
+          category: z.string(),
+          sexo: z.enum(['FEM', 'MASC']),
+          unit: z.enum(['s', 'm']),
+          rows: z.array(
+            z.object({
+              pos: z.number().optional(),
+              name: z.string(),
+              club: z.string(),
+              escalao: z.string(),
+              mark: z.string().optional(),
+              wind: z.string().optional(),
+              status: z.string().optional(),
+            })
+          ),
+        })
+      )
+      .default([]),
   }),
 });
 
