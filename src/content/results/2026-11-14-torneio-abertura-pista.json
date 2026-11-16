@@ -4,6 +4,7 @@
  "date": "2026-11-14",
  "events": [
   {
+   "time": "15:00",
    "discipline": "Lançamento do Peso 3kg",
    "category": "Sub-16",
    "sexo": "FEM",
@@ -26,6 +27,7 @@
    ]
   },
   {
+   "time": "15:00",
    "discipline": "Lançamento do Peso 4kg",
    "category": "Sub-18",
    "sexo": "FEM",
@@ -62,6 +64,7 @@
    ]
   },
   {
+   "time": "15:00",
    "discipline": "Lançamento do Peso 4kg",
    "category": "Absoluto",
    "sexo": "FEM",
@@ -98,6 +101,7 @@
    ]
   },
   {
+   "time": "15:00",
    "discipline": "Salto em Comprimento",
    "category": "Sub-16",
    "sexo": "MASC",
@@ -128,6 +132,7 @@
    ]
   },
   {
+   "time": "15:00",
    "discipline": "Salto em Comprimento",
    "category": "Sub-18",
    "sexo": "MASC",
@@ -158,6 +163,7 @@
    ]
   },
   {
+   "time": "15:00",
    "discipline": "Lançamento do Dardo 600g",
    "category": "Sub-16",
    "sexo": "MASC",
@@ -180,6 +186,7 @@
    ]
   },
   {
+   "time": "15:00",
    "discipline": "Lançamento do Dardo 700g",
    "category": "Sub-18",
    "sexo": "MASC",
@@ -202,6 +209,7 @@
    ]
   },
   {
+   "time": "15:00",
    "discipline": "Lançamento do Dardo 800g",
    "category": "Absoluto",
    "sexo": "MASC",
@@ -231,6 +239,7 @@
    ]
   },
   {
+   "time": "15:00",
    "discipline": "60 m",
    "category": "Absoluto",
    "sexo": "MASC",
@@ -253,6 +262,7 @@
    ]
   },
   {
+   "time": "15:00",
    "discipline": "60 m",
    "category": "Sub-18",
    "sexo": "MASC",
@@ -289,6 +299,7 @@
    ]
   },
   {
+   "time": "15:10",
    "discipline": "60 m",
    "category": "Sub-18",
    "sexo": "FEM",
@@ -311,6 +322,7 @@
    ]
   },
   {
+   "time": "15:10",
    "discipline": "60 m",
    "category": "Absoluto",
    "sexo": "FEM",
@@ -326,6 +338,7 @@
    ]
   },
   {
+   "time": "15:20",
    "discipline": "60 m",
    "category": "Sub-16",
    "sexo": "MASC",
@@ -362,6 +375,7 @@
    ]
   },
   {
+   "time": "15:30",
    "discipline": "60 m",
    "category": "Sub-16",
    "sexo": "FEM",
@@ -377,6 +391,7 @@
    ]
   },
   {
+   "time": "15:40",
    "discipline": "60 m",
    "category": "Sub-14",
    "sexo": "MASC",
@@ -476,6 +491,7 @@
    ]
   },
   {
+   "time": "15:50",
    "discipline": "60 m",
    "category": "Sub-14",
    "sexo": "FEM",
@@ -595,6 +611,7 @@
    ]
   },
   {
+   "time": "16:10",
    "discipline": "Lançamento do Peso 4kg",
    "category": "Sub-16",
    "sexo": "MASC",
@@ -610,6 +627,7 @@
    ]
   },
   {
+   "time": "16:10",
    "discipline": "Lançamento do Peso 5kg",
    "category": "Sub-18",
    "sexo": "MASC",
@@ -646,6 +664,7 @@
    ]
   },
   {
+   "time": "16:10",
    "discipline": "Lançamento do Peso 7,260kg",
    "category": "Absoluto",
    "sexo": "MASC",
@@ -668,6 +687,7 @@
    ]
   },
   {
+   "time": "16:10",
    "discipline": "Salto em Comprimento",
    "category": "Sub-16",
    "sexo": "FEM",
@@ -692,6 +712,7 @@
    ]
   },
   {
+   "time": "16:10",
    "discipline": "Salto em Comprimento",
    "category": "Sub-18",
    "sexo": "FEM",
@@ -716,6 +737,7 @@
    ]
   },
   {
+   "time": "16:10",
    "discipline": "Salto em Comprimento",
    "category": "Absoluto",
    "sexo": "FEM",
@@ -740,6 +762,7 @@
    ]
   },
   {
+   "time": "16:10",
    "discipline": "Lançamento do Dardo 500g",
    "category": "Sub-16",
    "sexo": "FEM",
@@ -755,6 +778,7 @@
    ]
   },
   {
+   "time": "16:10",
    "discipline": "Lançamento do Dardo 600g",
    "category": "Absoluto",
    "sexo": "FEM",

@@ -44,6 +44,7 @@ const results = defineCollection({
     events: z
       .array(
         z.object({
+          time: z.string().optional(), // start time, HH:MM
           discipline: z.string(),
           category: z.string(),
           sexo: z.enum(['FEM', 'MASC']),
