@@ -22,71 +22,207 @@ const { events } = Astro.props;
 
 const MEDAL: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
 const CAT_ORDER = ['Sub-12', 'Sub-14', 'Sub-16', 'Sub-18', 'Sub-20', 'Absoluto'];
+const DISC_ORDER = ['60 m', 'Salto em Comprimento', 'Lançamento do Peso', 'Lançamento do Dardo'];
 const sexLabel = (s: string) => (s === 'FEM' ? 'Feminino' : 'Masculino');
-const sorted = [...events].sort(
-  (a, b) =>
-    (a.unit === b.unit ? 0 : a.unit === 's' ? -1 : 1) ||
-    a.discipline.localeCompare(b.discipline, 'pt') ||
-    CAT_ORDER.indexOf(a.category) - CAT_ORDER.indexOf(b.category) ||
-    (a.sexo === 'FEM' ? 0 : 1) - (b.sexo === 'FEM' ? 0 : 1)
-);
-const withCork = (e: Ev) => e.rows.some((r) => r.club === 'CORK');
+// Group by discipline without the implement weight ("Lançamento do Peso 4kg" -> "Lançamento do Peso")
+const groupOf = (d: string) => d.replace(/\s+[\d,]+\s?k?g$/i, '');
+
+const sorted = [...events]
+  .map((e) => ({ ...e, group: groupOf(e.discipline) }))
+  .sort(
+    (a, b) =>
+      DISC_ORDER.indexOf(a.group) - DISC_ORDER.indexOf(b.group) ||
+      CAT_ORDER.indexOf(a.category) - CAT_ORDER.indexOf(b.category) ||
+      (a.sexo === 'FEM' ? 0 : 1) - (b.sexo === 'FEM' ? 0 : 1)
+  );
+const groups = DISC_ORDER.filter((g) => sorted.some((e) => e.group === g));
+const cats = CAT_ORDER.filter((c) => sorted.some((e) => e.category === c));
 ---
 
 <div class="events" data-events>
-  <label class="only-cork"><input type="checkbox" data-only-cork /><span>Só provas com atletas do CORK</span></label>
-  {sorted.map((ev) => (
-    <section class="ev" data-cork={withCork(ev) ? '1' : '0'}>
-      <h3>{ev.discipline} · {ev.category} · {sexLabel(ev.sexo)}</h3>
-      <div class="table-wrap card">
-        <table>
-          <thead>
-            <tr><th>Class.</th><th>Atleta</th><th>Clube</th><th>Escalão</th><th>Marca</th></tr>
-          </thead>
-          <tbody>
-            {ev.rows.map((r) => (
-              <tr class:list={[{ cork: r.club === 'CORK' }]} data-club={r.club}>
-                <td class="num">
-                  {r.pos ? <><span class="medal" aria-hidden="true">{MEDAL[r.pos] ?? ''}</span>{r.pos}º</> : '–'}
-                </td>
-                <td class="name">{r.name}</td>
-                <td>{r.club}</td>
-                <td>{r.escalao}</td>
-                <td class="result">
-                  {r.mark ? <>{r.mark} {ev.unit}{r.wind && <span class="wind" title="Vento (m/s)">({r.wind})</span>}</> : (r.status ?? '–')}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+  <div class="filters card">
+    <div class="frow" role="group" aria-label="Prova">
+      <span class="flabel">Prova</span>
+      <div class="chips">
+        <button type="button" class="chip" data-k="group" data-v="" aria-pressed="true">Todas</button>
+        {groups.map((g) => <button type="button" class="chip" data-k="group" data-v={g} aria-pressed="false">{g}</button>)}
       </div>
-    </section>
-  ))}
+    </div>
+    <div class="frow" role="group" aria-label="Escalão">
+      <span class="flabel">Escalão</span>
+      <div class="chips">
+        <button type="button" class="chip" data-k="cat" data-v="" aria-pressed="true">Todos</button>
+        {cats.map((c) => <button type="button" class="chip" data-k="cat" data-v={c} aria-pressed="false">{c}</button>)}
+      </div>
+    </div>
+    <div class="frow" role="group" aria-label="Sexo">
+      <span class="flabel">Sexo</span>
+      <div class="chips">
+        <button type="button" class="chip" data-k="sexo" data-v="" aria-pressed="true">Todos</button>
+        <button type="button" class="chip" data-k="sexo" data-v="FEM" aria-pressed="false">Feminino</button>
+        <button type="button" class="chip" data-k="sexo" data-v="MASC" aria-pressed="false">Masculino</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <label class="only-cork"><input type="checkbox" data-only-cork /><span>Só atletas do CORK</span></label>
+      <span class="count" data-count aria-live="polite"></span>
+      <button type="button" class="reset" data-reset>Repor filtros</button>
+    </div>
+  </div>
+
+  <div class="list">
+    {sorted.map((ev) => (
+      <details
+        class="ev"
+        data-group={ev.group}
+        data-cat={ev.category}
+        data-sexo={ev.sexo}
+        data-cork={ev.rows.some((r) => r.club === 'CORK') ? '1' : '0'}
+        open
+      >
+        <summary>
+          <span class="title">{ev.discipline} · {ev.category} · {sexLabel(ev.sexo)}</span>
+          <span class="n">{ev.rows.length} atletas</span>
+        </summary>
+        <div class="table-wrap card">
+          <table>
+            <thead>
+              <tr><th>Class.</th><th>Atleta</th><th>Clube</th><th>Escalão</th><th>Marca</th></tr>
+            </thead>
+            <tbody>
+              {ev.rows.map((r) => (
+                <tr class:list={[{ cork: r.club === 'CORK' }]} data-club={r.club}>
+                  <td class="num">
+                    {r.pos ? <><span class="medal" aria-hidden="true">{MEDAL[r.pos] ?? ''}</span>{r.pos}º</> : '–'}
+                  </td>
+                  <td class="name">{r.name}</td>
+                  <td>{r.club}</td>
+                  <td>{r.escalao}</td>
+                  <td class="result">
+                    {r.mark ? <>{r.mark} {ev.unit}{r.wind && <span class="wind" title="Vento (m/s)">({r.wind})</span>}</> : (r.status ?? '–')}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    ))}
+  </div>
+  <p class="no-match" data-empty hidden>Nenhuma prova com estes filtros.</p>
 </div>
 
 <style>
-  .only-cork { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600; cursor: pointer; margin-bottom: 1rem; }
-  .ev { margin-bottom: 1.75rem; }
-  .ev h3 { margin: 0 0 0.5rem; }
+  .filters { padding: 1rem; margin-bottom: 1.25rem; display: grid; gap: 0.7rem; }
+  .frow { display: grid; grid-template-columns: 5rem 1fr; align-items: center; gap: 0.5rem; }
+  .flabel { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-ink-soft); }
+  .chips { display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex: none;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-ink-soft);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .chip:hover { color: var(--color-primary); }
+  .chip[aria-pressed='true'] { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+  .chip:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+  .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem; }
+  .only-cork { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600; cursor: pointer; }
+  .count { color: var(--color-ink-soft); font-size: 0.9rem; }
+  .reset {
+    margin-left: auto;
+    background: none;
+    border: 1px solid var(--color-border);
+    color: var(--color-primary);
+    border-radius: 999px;
+    padding: 0.3rem 0.9rem;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  /* Events: 2 columns on wide screens, collapsible on any */
+  .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); gap: 0.75rem 1rem; align-items: start; }
+  .ev[hidden] { display: none; }
+  .ev summary {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem;
+    cursor: pointer; padding: 0.55rem 0.2rem; font-weight: 700; list-style: none;
+  }
+  .ev summary::-webkit-details-marker { display: none; }
+  .ev summary::before { content: '▸'; margin-right: 0.4rem; transition: transform 0.15s; display: inline-block; }
+  .ev[open] summary::before { transform: rotate(90deg); }
+  .title { flex: 1; }
+  .n { font-size: 0.8rem; font-weight: 400; color: var(--color-ink-soft); white-space: nowrap; }
   .table-wrap { padding: 0; overflow-x: auto; }
-  table { margin: 0; min-width: 480px; }
-  th, td { padding: 0.6rem 0.75rem; }
+  table { margin: 0; }
+  th, td { padding: 0.5rem 0.6rem; font-size: 0.9rem; }
   .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   .medal { display: inline-block; width: 1.6em; }
-  .result { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .result { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .wind { font-size: 0.75rem; font-weight: 400; color: var(--color-ink-soft); margin-left: 0.25rem; }
   tr.cork td { background: color-mix(in srgb, var(--color-accent) 18%, transparent); font-weight: 600; }
   tr.cork td:first-child { box-shadow: inset 4px 0 0 var(--color-accent); }
   tr.cork .result { color: var(--color-primary); }
+  .no-match { text-align: center; padding: 1.5rem; color: var(--color-ink-soft); }
+
+  @media (max-width: 560px) {
+    .frow { grid-template-columns: 1fr; gap: 0.25rem; }
+    /* On phones hide the redundant Escalão column to avoid sideways scrolling */
+    th:nth-child(4), td:nth-child(4) { display: none; }
+    th, td { padding: 0.5rem 0.5rem; }
+  }
 </style>
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-events]').forEach((root) => {
-    const box = root.querySelector<HTMLInputElement>('[data-only-cork]')!;
-    box.addEventListener('change', () => {
-      root.querySelectorAll<HTMLElement>('.ev').forEach((s) => {
-        s.hidden = box.checked && s.dataset.cork !== '1';
-      });
+    const evs = [...root.querySelectorAll<HTMLDetailsElement>('.ev')];
+    const chips = [...root.querySelectorAll<HTMLButtonElement>('.chip')];
+    const onlyCork = root.querySelector<HTMLInputElement>('[data-only-cork]')!;
+    const count = root.querySelector<HTMLElement>('[data-count]')!;
+    const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+    const state: Record<string, string> = { group: '', cat: '', sexo: '' };
+
+    function apply() {
+      let shown = 0;
+      for (const ev of evs) {
+        const ok =
+          (!state.group || ev.dataset.group === state.group) &&
+          (!state.cat || ev.dataset.cat === state.cat) &&
+          (!state.sexo || ev.dataset.sexo === state.sexo) &&
+          (!onlyCork.checked || ev.dataset.cork === '1');
+        ev.hidden = !ok;
+        if (ok) shown++;
+        // With "only CORK", also hide other athletes' rows
+        ev.querySelectorAll<HTMLTableRowElement>('tbody tr').forEach((tr) => {
+          tr.hidden = onlyCork.checked && tr.dataset.club !== 'CORK';
+        });
+      }
+      count.textContent = `${shown} de ${evs.length} provas`;
+      empty.hidden = shown > 0;
+    }
+
+    chips.forEach((c) =>
+      c.addEventListener('click', () => {
+        state[c.dataset.k!] = c.dataset.v!;
+        chips.filter((x) => x.dataset.k === c.dataset.k).forEach((x) => x.setAttribute('aria-pressed', String(x === c)));
+        apply();
+      })
+    );
+    onlyCork.addEventListener('change', apply);
+    root.querySelector('[data-reset]')!.addEventListener('click', () => {
+      for (const k in state) state[k] = '';
+      chips.forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.v === '')));
+      onlyCork.checked = false;
+      apply();
     });
+    apply();
   });
 </script>
