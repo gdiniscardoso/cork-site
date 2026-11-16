@@ -1,10 +1,10 @@
 ---
 title: "Regionais de Corta-Mato: CORK vence coletiva Sub 14 masculina"
 date: 2026-11-11
-summary: "No Vimieiro (Arraiolos), 17 atletas do CORK competiram nos Campeonatos Regionais de Corta-Mato. Destaque para o 1.º lugar coletivo em Sub 14 masculinos e o 2.º lugar de Lukas Rocha em Sub 18."
+summary: "No Vimieiro (Arraiolos), 16 atletas do CORK (mais uma atleta extra) competiram nos Campeonatos Regionais de Corta-Mato. Destaque para o 1.º lugar coletivo em Sub 14 masculinos e o 2.º lugar de Lukas Rocha em Sub 18."
 ---
 
-No passado dia 7 de novembro, o Vimieiro (Arraiolos) recebeu os **Campeonatos Regionais de Corta-Mato 2026**. O CORK esteve representado por **17 atletas**, de Sub 10 a veteranos, e trouxe um balanço muito positivo.
+No passado dia 7 de novembro, o Vimieiro (Arraiolos) recebeu os **Campeonatos Regionais de Corta-Mato 2026**. O CORK esteve representado por **16 atletas** (mais uma atleta extra), de Sub 10 a veteranos, e trouxe um balanço muito positivo.
 
 ## Destaque coletivo
 
