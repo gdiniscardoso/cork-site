@@ -8,6 +8,20 @@ import { getCollection } from 'astro:content';
 const races = (await getCollection('results')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
+
+const fmt = (d: Date, o: Intl.DateTimeFormatOptions) => d.toLocaleDateString('pt-PT', o);
+// Per-competition summary shown on the timeline: CORK athletes and podiums.
+const summaries = races.map((r) => {
+  const cork = [
+    ...r.data.rows.filter((x) => x.club === 'CORK').map((x) => ({ name: x.name, pos: x.pos as number | undefined })),
+    ...r.data.events.flatMap((e) => e.rows.filter((x) => x.club === 'CORK').map((x) => ({ name: x.name, pos: x.pos }))),
+  ];
+  return {
+    athletes: new Set(cork.map((c) => c.name)).size,
+    podiums: cork.filter((c) => c.pos && c.pos <= 3).length,
+    kind: r.data.events.length > 0 ? 'Pista' : 'Corta-mato',
+  };
+});
 ---
 
 <BaseLayout title="Resultados" description="Resultados das provas em que participam os atletas do CORK.">
@@ -16,17 +30,39 @@ const races = (await getCollection('results')).sort(
       <p class="eyebrow">Atletas</p>
       <h1>Resultados</h1>
       <p class="intro">
-        Classificações completas das provas oficiais. Os atletas do CORK
-        aparecem destacados; use os filtros em cada coluna para encontrar
-        um atleta, clube ou escalão.
+        Escolhe uma competição na linha do tempo. Os atletas do CORK aparecem
+        destacados e cada competição tem os filtros adequados ao seu tipo.
       </p>
       {races.length === 0 && <EmptyState />}
-      {races.map((r) => (
-        <article class="race">
+
+      {races.length > 0 && (
+        <ol class="timeline" role="tablist" aria-label="Competições">
+          {races.map((r, i) => (
+            <li>
+              <button type="button" role="tab" class="node" data-node={r.id} aria-selected={i === 0 ? 'true' : 'false'}>
+                <span class="dot"></span>
+                <span class="date">{fmt(r.data.date, { day: 'numeric', month: 'short' })}<small>{r.data.date.getFullYear()}</small></span>
+                <span class="body">
+                  <strong>{r.data.competition}</strong>
+                  <span class="sub">
+                    {summaries[i].kind}{r.data.location && <> · {r.data.location}</>}
+                  </span>
+                  <span class="sub cork-sum">
+                    {summaries[i].athletes} atletas CORK{summaries[i].podiums > 0 && <> · {summaries[i].podiums} 🏅</>}
+                  </span>
+                </span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      )}
+
+      {races.map((r, i) => (
+        <article class="race" data-race={r.id} hidden={i !== 0}>
           <h2>{r.data.competition}</h2>
           <p class="meta">
             {r.data.location && <>{r.data.location} · </>}
-            {r.data.date.toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' })}
+            {fmt(r.data.date, { day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
           {r.data.rows.length > 0 && <ResultsTable rows={r.data.rows} />}
           {r.data.events.length > 0 && <EventResults events={r.data.events} />}
@@ -38,11 +74,71 @@ const races = (await getCollection('results')).sort(
 
 <style>
   h1 { margin-bottom: 0.5rem; }
-  .intro {
-    max-width: 640px;
-    margin-bottom: 2rem;
+  .intro { max-width: 640px; margin-bottom: 2rem; }
+
+  /* Horizontal timeline on wide screens, vertical on phones */
+  .timeline {
+    list-style: none; margin: 0 0 2rem; padding: 0;
+    display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x proximity;
+    padding-bottom: 0.5rem; position: relative;
   }
+  .timeline li { flex: 1 0 260px; scroll-snap-align: start; position: relative; padding-top: 1.4rem; }
+  .timeline li::before {
+    content: ''; position: absolute; top: 0.4rem; left: 0; right: -1rem; height: 2px; background: var(--color-border);
+  }
+  .timeline li:last-child::before { right: 0; }
+  .node {
+    all: unset; box-sizing: border-box; display: flex; gap: 0.75rem; width: 100%; cursor: pointer;
+    padding: 0.75rem 0.9rem; border: 1px solid var(--color-border); border-radius: 10px;
+    background: var(--color-bg); position: relative;
+  }
+  .node:hover { border-color: var(--color-primary); }
+  .node:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+  .node[aria-selected='true'] { border-color: var(--color-brand); box-shadow: 0 0 0 2px var(--color-brand); }
+  .dot {
+    position: absolute; top: -1.4rem; left: 0.9rem; width: 0.8rem; height: 0.8rem; border-radius: 50%;
+    background: var(--color-border); border: 3px solid var(--color-bg); box-shadow: 0 0 0 2px var(--color-border);
+  }
+  .node[aria-selected='true'] .dot { background: var(--color-brand); box-shadow: 0 0 0 2px var(--color-brand); }
+  .date { display: flex; flex-direction: column; align-items: center; min-width: 3rem; font-weight: 800; color: var(--color-primary); line-height: 1.1; text-transform: uppercase; }
+  .date small { font-weight: 500; color: var(--color-ink-soft); }
+  .body { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+  .body strong { line-height: 1.25; }
+  .sub { font-size: 0.82rem; color: var(--color-ink-soft); }
+  .cork-sum { color: var(--color-primary); font-weight: 600; }
+
   .race { margin-bottom: 3rem; }
+  .race[hidden] { display: none; }
   .race h2 { margin-bottom: 0.25rem; }
   .meta { color: var(--color-ink-soft); margin: 0 0 1rem; }
+
+  @media (max-width: 640px) {
+    .timeline { flex-direction: column; overflow: visible; gap: 0.75rem; padding-left: 1.4rem; }
+    .timeline li { flex: none; padding-top: 0; }
+    .timeline li::before { top: 0; bottom: -0.75rem; left: -1.05rem; right: auto; width: 2px; height: auto; }
+    .timeline li:last-child::before { bottom: 50%; }
+    .dot { top: 1.1rem; left: -1.5rem; }
+  }
 </style>
+
+<script>
+  const nodes = [...document.querySelectorAll<HTMLButtonElement>('[data-node]')];
+  const races = [...document.querySelectorAll<HTMLElement>('[data-race]')];
+  function select(id: string) {
+    nodes.forEach((n) => n.setAttribute('aria-selected', String(n.dataset.node === id)));
+    races.forEach((r) => (r.hidden = r.dataset.race !== id));
+    history.replaceState(null, '', '#' + id);
+  }
+  nodes.forEach((n, i) => {
+    n.addEventListener('click', () => select(n.dataset.node!));
+    n.addEventListener('keydown', (e) => {
+      const next = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? i + 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? i - 1 : -1;
+      if (next < 0 || next >= nodes.length) return;
+      e.preventDefault();
+      nodes[next].focus();
+      select(nodes[next].dataset.node!);
+    });
+  });
+  const fromHash = location.hash.slice(1);
+  if (fromHash && nodes.some((n) => n.dataset.node === fromHash)) select(fromHash);
+</script>

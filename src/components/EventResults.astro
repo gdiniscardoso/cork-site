@@ -37,13 +37,6 @@ const sorted = [...events]
       CAT_ORDER.indexOf(a.category) - CAT_ORDER.indexOf(b.category) ||
       (a.sexo === 'FEM' ? 0 : 1) - (b.sexo === 'FEM' ? 0 : 1)
   );
-const slots: { time: string; evs: typeof sorted }[] = [];
-for (const e of sorted) {
-  const t = e.time ?? '';
-  let s = slots.find((x) => x.time === t);
-  if (!s) slots.push((s = { time: t, evs: [] }));
-  s.evs.push(e);
-}
 const groups = DISC_ORDER.filter((g) => sorted.some((e) => e.group === g));
 const cats = CAT_ORDER.filter((c) => sorted.some((e) => e.category === c));
 ---
@@ -79,12 +72,8 @@ const cats = CAT_ORDER.filter((c) => sorted.some((e) => e.category === c));
     </div>
   </div>
 
-  <ol class="timeline">
-    {slots.map((slot) => (
-    <li class="slot" data-slot>
-      <div class="when"><span class="dot"></span><time>{slot.time || "—"}</time></div>
-      <div class="list">
-    {slot.evs.map((ev) => (
+  <div class="list">
+    {sorted.map((ev) => (
       <details
         class="ev"
         data-group={ev.group}
@@ -94,7 +83,7 @@ const cats = CAT_ORDER.filter((c) => sorted.some((e) => e.category === c));
         open
       >
         <summary>
-          <span class="title"><span class="tag" data-g={ev.group}>{ev.group}</span> {ev.discipline.slice(ev.group.length).trim()} · {ev.category} · {sexLabel(ev.sexo)}</span>
+          <span class="title">{ev.time && <time class="t">{ev.time}</time>}<span class="tag" data-g={ev.group}>{ev.group}</span> {ev.discipline.slice(ev.group.length).trim()} · {ev.category} · {sexLabel(ev.sexo)}</span>
           <span class="n">{ev.rows.length} atletas</span>
         </summary>
         <div class="table-wrap card">
@@ -121,10 +110,7 @@ const cats = CAT_ORDER.filter((c) => sorted.some((e) => e.category === c));
         </div>
       </details>
     ))}
-      </div>
-    </li>
-    ))}
-  </ol>
+  </div>
   <p class="no-match" data-empty hidden>Nenhuma prova com estes filtros.</p>
 </div>
 
@@ -165,17 +151,10 @@ const cats = CAT_ORDER.filter((c) => sorted.some((e) => e.category === c));
     cursor: pointer;
   }
 
-  /* Timeline */
-  .timeline { list-style: none; margin: 0; padding: 0; position: relative; }
-  .slot { display: grid; grid-template-columns: 4.2rem 1fr; gap: 0 0.75rem; position: relative; padding-bottom: 1.25rem; }
-  .slot[hidden] { display: none; }
-  .slot::before { content: ''; position: absolute; left: 4.2rem; top: 0.9rem; bottom: -0.3rem; width: 2px; background: var(--color-border); transform: translateX(-0.4rem); }
-  .slot:last-child::before { display: none; }
-  .when { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; align-self: start; position: sticky; top: 0.5rem; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--color-primary); padding-top: 0.3rem; }
-  .dot { order: 2; width: 0.8rem; height: 0.8rem; border-radius: 50%; background: var(--color-brand); border: 3px solid var(--color-bg); box-shadow: 0 0 0 2px var(--color-brand); margin-right: -1.1rem; position: relative; z-index: 1; }
+  .t { font-variant-numeric: tabular-nums; color: var(--color-ink-soft); font-weight: 600; margin-right: 0.5rem; }
   .tag { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 0.1rem 0.5rem; border-radius: 999px; background: color-mix(in srgb, var(--color-primary) 12%, transparent); color: var(--color-primary); margin-right: 0.3rem; }
-  .tag[data-g='60 m'] { background: color-mix(in srgb, var(--color-accent) 25%, transparent); }
-  .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 0.5rem 1rem; align-items: start; padding-left: 0.6rem; }
+    .tag[data-g='60 m'] { background: color-mix(in srgb, var(--color-accent) 25%, transparent); }
+  .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 0.5rem 1rem; align-items: start; }
   .ev[hidden] { display: none; }
   .chip:disabled { opacity: 0.35; cursor: not-allowed; }
   .ev summary {
@@ -201,11 +180,6 @@ const cats = CAT_ORDER.filter((c) => sorted.some((e) => e.category === c));
 
   @media (max-width: 560px) {
     .frow { grid-template-columns: 1fr; gap: 0.25rem; }
-    .slot { grid-template-columns: 1fr; }
-    .slot::before { display: none; }
-    .when { justify-content: flex-start; position: static; }
-    .dot { order: 0; margin: 0; }
-    .list { padding-left: 0; }
     /* On phones hide the redundant Escalão column to avoid sideways scrolling */
     th:nth-child(4), td:nth-child(4) { display: none; }
     th, td { padding: 0.5rem 0.5rem; }
@@ -221,7 +195,6 @@ const cats = CAT_ORDER.filter((c) => sorted.some((e) => e.category === c));
     const empty = root.querySelector<HTMLElement>('[data-empty]')!;
     const state: Record<string, string> = { group: '', cat: '', sexo: '' };
 
-    const slotEls = [...root.querySelectorAll<HTMLElement>('[data-slot]')];
     const matches = (ev: HTMLElement, st: Record<string, string>) =>
       (!st.group || ev.dataset.group === st.group) &&
       (!st.cat || ev.dataset.cat === st.cat) &&
@@ -238,7 +211,6 @@ const cats = CAT_ORDER.filter((c) => sorted.some((e) => e.category === c));
           tr.hidden = onlyCork.checked && tr.dataset.club !== 'CORK';
         });
       }
-      slotEls.forEach((sl) => (sl.hidden = !sl.querySelector('.ev:not([hidden])')));
       // Contextual filters: disable chips that would give no events with the other current filters
       for (const c of chips) {
         const k = c.dataset.k!;
