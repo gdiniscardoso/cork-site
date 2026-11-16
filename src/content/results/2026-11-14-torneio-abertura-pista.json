@@ -164,6 +164,45 @@
   },
   {
    "time": "15:00",
+   "discipline": "Salto em Comprimento",
+   "category": "Absoluto",
+   "sexo": "MASC",
+   "unit": "m",
+   "rows": [
+    {
+     "pos": 1,
+     "name": "Tiago Teodoro",
+     "club": "CORK",
+     "escalao": "Sub-23",
+     "mark": "5.02",
+     "wind": "-0.2"
+    },
+    {
+     "pos": 2,
+     "name": "Tiago Lança",
+     "club": "CORK",
+     "escalao": "Sénior",
+     "mark": "4.62",
+     "wind": "-1"
+    },
+    {
+     "pos": 3,
+     "name": "João Guedes",
+     "club": "CORK",
+     "escalao": "M 40",
+     "mark": "3.48",
+     "wind": "-1.2"
+    },
+    {
+     "name": "Daniel Silva",
+     "club": "AJL",
+     "escalao": "M 40",
+     "status": "DNS"
+    }
+   ]
+  },
+  {
+   "time": "15:00",
    "discipline": "Lançamento do Dardo 600g",
    "category": "Sub-16",
    "sexo": "MASC",
